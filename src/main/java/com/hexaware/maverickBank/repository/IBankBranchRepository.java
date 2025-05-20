@@ -1,5 +1,5 @@
 package com.hexaware.maverickBank.repository;
 
-public interface IEmployeeRepository {
+public interface IBankBranchRepository {
 
 }
