@@ -7,5 +7,5 @@ import com.hexaware.maverickBank.entity.BankEmployee;
 
 @Repository
 public interface IBankEmployeeRepository extends JpaRepository<BankEmployee, Integer> {
-	BankEmployee findByUser_UserId(int userId);
+	
 }
