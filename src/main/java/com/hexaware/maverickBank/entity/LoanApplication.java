@@ -3,9 +3,7 @@ package com.hexaware.maverickBank.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,147 +17,145 @@ import jakarta.persistence.Table;
 public class LoanApplication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "loan_application_id")
-    private int loanApplicationId;
+    private int applicationId;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customerId")
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "loan_id", nullable = false)
+    @JoinColumn(name = "loanId")
     private Loan loan;
 
-    @Column(name = "application_date", updatable = false)
-    private LocalDateTime applicationDate = LocalDateTime.now();
-
-    @Column(name = "loan_amount", nullable = false, precision = 15, scale = 2)
-    private BigDecimal loanAmount;
-
-    @Column(name = "purpose", length = 255)
+    private BigDecimal amountApplied;
     private String purpose;
-
-    @Column(name = "status", length = 20)
-    private String status; // "pending", "approved", "rejected", "disbursed"
+    private String status; // e.g., "pending", "approved", "rejected", "disbursed"
+    private LocalDateTime applicationDate;
 
     @ManyToOne
-    @JoinColumn(name = "approved_by_employee_id")
-    private BankEmployee approvedByEmployee;
+    @JoinColumn(name = "approvedBy")
+    private BankEmployee approvedBy;
 
-    @Column(name = "disbursement_date")
+    private String rejectionReason;
+
     private LocalDate disbursementDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    // Constructors
     public LoanApplication() {
     }
 
-    public LoanApplication(Customer customer, Loan loan, BigDecimal loanAmount, String purpose, String status) {
-        this.customer = customer;
-        this.loan = loan;
-        this.loanAmount = loanAmount;
-        this.purpose = purpose;
-        this.status = status;
+    public int getApplicationId() {
+        return applicationId;
     }
 
-    // Getters
-    public int getLoanApplicationId() {
-        return loanApplicationId;
+    public void setApplicationId(int applicationId) {
+        this.applicationId = applicationId;
     }
 
     public Customer getCustomer() {
         return customer;
     }
 
-    public Loan getLoan() {
-        return loan;
-    }
-
-    public LocalDateTime getApplicationDate() {
-        return applicationDate;
-    }
-
-    public BigDecimal getLoanAmount() {
-        return loanAmount;
-    }
-
-    public String getPurpose() {
-        return purpose;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public BankEmployee getApprovedByEmployee() {
-        return approvedByEmployee;
-    }
-
-    public LocalDate getDisbursementDate() {
-        return disbursementDate;
-    }
-
-    // Setters
-    public void setLoanApplicationId(int loanApplicationId) {
-        this.loanApplicationId = loanApplicationId;
-    }
-
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public Loan getLoan() {
+        return loan;
     }
 
     public void setLoan(Loan loan) {
         this.loan = loan;
     }
 
-    public void setApplicationDate(LocalDateTime applicationDate) {
-        this.applicationDate = applicationDate;
+    public BigDecimal getAmountApplied() {
+        return amountApplied;
     }
 
-    public void setLoanAmount(BigDecimal loanAmount) {
-        this.loanAmount = loanAmount;
+    public void setAmountApplied(BigDecimal amountApplied) {
+        this.amountApplied = amountApplied;
+    }
+
+    public String getPurpose() {
+        return purpose;
     }
 
     public void setPurpose(String purpose) {
         this.purpose = purpose;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public void setApprovedByEmployee(BankEmployee approvedByEmployee) {
-        this.approvedByEmployee = approvedByEmployee;
+    public LocalDateTime getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(LocalDateTime applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public BankEmployee getApprovedBy() {
+        return approvedBy;
+    }
+
+    public void setApprovedBy(BankEmployee approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+
+    public LocalDate getDisbursementDate() {
+        return disbursementDate;
     }
 
     public void setDisbursementDate(LocalDate disbursementDate) {
         this.disbursementDate = disbursementDate;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         return "LoanApplication{" +
-                "loanApplicationId=" + loanApplicationId +
+                "applicationId=" + applicationId +
                 ", customer=" + (customer != null ? customer.getCustomerId() : null) +
                 ", loan=" + (loan != null ? loan.getLoanId() : null) +
-                ", applicationDate=" + applicationDate +
-                ", loanAmount=" + loanAmount +
+                ", amountApplied=" + amountApplied +
                 ", purpose='" + purpose + '\'' +
                 ", status='" + status + '\'' +
-                ", approvedByEmployee=" + (approvedByEmployee != null ? approvedByEmployee.getEmployeeId() : null) +
+                ", applicationDate=" + applicationDate +
+                ", approvedBy=" + (approvedBy != null ? approvedBy.getEmployeeId() : null) +
+                ", rejectionReason='" + rejectionReason + '\'' +
                 ", disbursementDate=" + disbursementDate +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LoanApplication that = (LoanApplication) o;
-        return loanApplicationId == that.loanApplicationId && customer.equals(that.customer) && loan.equals(that.loan);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(loanApplicationId, customer, loan);
     }
 }
