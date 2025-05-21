@@ -2,9 +2,7 @@ package com.hexaware.maverickBank.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,107 +16,111 @@ import jakarta.persistence.Table;
 public class AccountClosureRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "closure_request_id")
-    private int closureRequestId;
+    private int requestId;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "accountId")
     private Account account;
 
-    @Column(name = "request_date", updatable = false)
-    private LocalDateTime requestDate = LocalDateTime.now();
-
-    @Column(name = "status", length = 20)
-    private String status; // "pending", "approved", "rejected"
+    private String reason;
+    private String status; // e.g., "pending", "approved", "rejected"
+    private LocalDateTime requestDate;
 
     @ManyToOne
-    @JoinColumn(name = "approved_by_employee_id")
-    private BankEmployee approvedByEmployee;
+    @JoinColumn(name = "approvedBy")
+    private BankEmployee approvedBy;
 
-    @Column(name = "closure_date")
     private LocalDate closureDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    // Constructors
     public AccountClosureRequest() {
     }
 
-    public AccountClosureRequest(Account account, String status) {
-        this.account = account;
-        this.status = status;
+    public int getRequestId() {
+        return requestId;
     }
 
-    // Getters
-    public int getClosureRequestId() {
-        return closureRequestId;
+    public void setRequestId(int requestId) {
+        this.requestId = requestId;
     }
 
     public Account getAccount() {
         return account;
     }
 
-    public LocalDateTime getRequestDate() {
-        return requestDate;
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
     public String getStatus() {
         return status;
     }
 
-    public BankEmployee getApprovedByEmployee() {
-        return approvedByEmployee;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public LocalDate getClosureDate() {
-        return closureDate;
-    }
-
-    // Setters
-    public void setClosureRequestId(int closureRequestId) {
-        this.closureRequestId = closureRequestId;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
+    public LocalDateTime getRequestDate() {
+        return requestDate;
     }
 
     public void setRequestDate(LocalDateTime requestDate) {
         this.requestDate = requestDate;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public BankEmployee getApprovedBy() {
+        return approvedBy;
     }
 
-    public void setApprovedByEmployee(BankEmployee approvedByEmployee) {
-        this.approvedByEmployee = approvedByEmployee;
+    public void setApprovedBy(BankEmployee approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+
+    public LocalDate getClosureDate() {
+        return closureDate;
     }
 
     public void setClosureDate(LocalDate closureDate) {
         this.closureDate = closureDate;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         return "AccountClosureRequest{" +
-                "closureRequestId=" + closureRequestId +
+                "requestId=" + requestId +
                 ", account=" + (account != null ? account.getAccountId() : null) +
-                ", requestDate=" + requestDate +
+                ", reason='" + reason + '\'' +
                 ", status='" + status + '\'' +
-                ", approvedByEmployee=" + (approvedByEmployee != null ? approvedByEmployee.getEmployeeId() : null) +
+                ", requestDate=" + requestDate +
+                ", approvedBy=" + (approvedBy != null ? approvedBy.getEmployeeId() : null) +
                 ", closureDate=" + closureDate +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AccountClosureRequest that = (AccountClosureRequest) o;
-        return closureRequestId == that.closureRequestId && account.equals(that.account);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(closureRequestId, account);
     }
 }
