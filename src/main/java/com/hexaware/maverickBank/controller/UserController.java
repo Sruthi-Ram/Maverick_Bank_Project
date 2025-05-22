@@ -1,11 +1,25 @@
 package com.hexaware.maverickBank.controller;
 
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.service.interfaces.UserService;
+import java.util.NoSuchElementException;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.hexaware.maverickBank.entity.User;
+import com.hexaware.maverickBank.service.interfaces.UserService;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -15,54 +29,59 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        User registeredUser = userService.registerUser(user);
-        return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public User registerUser(@Valid @RequestBody User user) {
+        return userService.registerUser(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> loginUser(@RequestParam String identifier, @RequestParam String password) {
+    public User loginUser(@RequestParam String identifier, @RequestParam String password) {
         User user = userService.loginUser(identifier, password);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
+        return user;
     }
 
     @GetMapping("/getuserbyid/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable int userId) {
+    public User getUserById(@PathVariable int userId) {
         User user = userService.getUserById(userId);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (user == null) {
+            throw new NoSuchElementException("User not found with ID: " + userId);
         }
+        return user;
     }
 
     @PutMapping("/updateuser/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable int userId,
-                                             @RequestParam(required = false) String password,
-                                             @RequestParam(required = false) String email,
-                                             @RequestParam(required = false) String role,
-                                             @RequestParam(required = false) String status) {
+    public User updateUser(@PathVariable int userId,
+                             @RequestParam(required = false) String password,
+                             @RequestParam(required = false) String email,
+                             @RequestParam(required = false) String role,
+                             @RequestParam(required = false) String status) {
         User updatedUser = userService.updateUser(userId, password, email, role, status);
-        if (updatedUser != null) {
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (updatedUser == null) {
+            throw new NoSuchElementException("User not found with ID: " + userId);
         }
+        return updatedUser;
     }
 
     @DeleteMapping("/deactivateuser/{userId}")
-    public ResponseEntity<Void> deactivateUser(@PathVariable int userId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deactivateUser(@PathVariable int userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            throw new NoSuchElementException("User not found with ID: " + userId);
+        }
         userService.deactivateUser(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable int userId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable int userId) {
+        User user = userService.getUserById(userId);
+        if (user == null) {
+            throw new NoSuchElementException("User not found with ID: " + userId);
+        }
         userService.deleteUser(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
