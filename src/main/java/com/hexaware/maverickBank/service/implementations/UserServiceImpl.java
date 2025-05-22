@@ -1,14 +1,13 @@
 package com.hexaware.maverickBank.service.implementations;
 
-import java.time.LocalDateTime;
-
+import com.hexaware.maverickBank.entity.User;
+import com.hexaware.maverickBank.repository.IUserRepository;
+import com.hexaware.maverickBank.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.IUserRepository;
-import com.hexaware.maverickBank.service.interfaces.UserService;
+import java.time.LocalDateTime;
 
 @Service
 public class UserServiceImpl implements UserService {
