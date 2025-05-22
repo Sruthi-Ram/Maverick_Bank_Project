@@ -18,8 +18,6 @@ public interface IUserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT u FROM User u WHERE u.email = :email")
     User findByEmail(@Param("email") String email);
 
-    // Create operation is handled by JpaRepository's save() method
-
     @Transactional
     @Modifying
     @Query("UPDATE User u SET u.password = :password, u.email = :email, u.role = :role, u.updatedAt = CURRENT_TIMESTAMP, u.status = :status WHERE u.userId = :userId")
@@ -30,7 +28,6 @@ public interface IUserRepository extends JpaRepository<User, Integer> {
     @Query("UPDATE User u SET u.status = 'inactive', u.updatedAt = CURRENT_TIMESTAMP WHERE u.userId = :userId")
     void deactivateUser(@Param("userId") int userId);
 
-    // Delete operation (if needed as a separate method)
     @Transactional
     @Modifying
     @Query("DELETE FROM User u WHERE u.userId = :userId")

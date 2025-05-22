@@ -2,10 +2,14 @@ package com.hexaware.maverickBank.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,6 +25,10 @@ public class User {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String status; // active, inactive, locked
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Customer customer;
 
     public User() {
     }
@@ -87,6 +95,17 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+        if (customer != null && customer.getUser() != this) {
+            customer.setUser(this);
+        }
     }
 
     @Override

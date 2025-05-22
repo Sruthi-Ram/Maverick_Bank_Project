@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/getuserid/{userId}")
+    @GetMapping("/getuserbyid/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable int userId) {
         User user = userService.getUserById(userId);
         if (user != null) {
