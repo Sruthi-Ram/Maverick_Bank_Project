@@ -1,13 +1,13 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.Role;
+import com.hexaware.maverickBank.dto.RoleDTO;
 import java.util.List;
 
 public interface RoleService {
-    Role createRole(Role role);
-    Role getRoleById(Long roleId);
-    List<Role> getAllRoles();
-    Role updateRole(Long roleId, Role role);
+    RoleDTO createRole(RoleDTO roleDTO);
+    RoleDTO getRoleById(Long roleId);
+    List<RoleDTO> getAllRoles();
+    RoleDTO updateRole(Long roleId, RoleDTO roleDTO);
     void deleteRole(Long roleId);
-    Role getRoleByName(String name);
+    RoleDTO getRoleByName(String name);
 }

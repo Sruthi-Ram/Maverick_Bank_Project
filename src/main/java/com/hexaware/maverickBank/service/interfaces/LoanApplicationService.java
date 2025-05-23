@@ -1,13 +1,15 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.LoanApplication;
+import com.hexaware.maverickBank.dto.LoanApplicationCreateRequestDTO;
+import com.hexaware.maverickBank.dto.LoanApplicationDTO;
+import com.hexaware.maverickBank.dto.LoanApplicationUpdateRequestDTO;
 import java.util.List;
 
 public interface LoanApplicationService {
-    LoanApplication createLoanApplication(LoanApplication loanApplication);
-    LoanApplication getLoanApplicationById(Long applicationId);
-    List<LoanApplication> getAllLoanApplications();
-    LoanApplication updateLoanApplication(Long applicationId, LoanApplication loanApplication);
+    LoanApplicationDTO createLoanApplication(LoanApplicationCreateRequestDTO loanApplicationCreateRequestDTO);
+    LoanApplicationDTO getLoanApplicationById(Long applicationId);
+    List<LoanApplicationDTO> getAllLoanApplications();
+    LoanApplicationDTO updateLoanApplication(Long applicationId, LoanApplicationUpdateRequestDTO loanApplicationUpdateRequestDTO);
     void deleteLoanApplication(Long applicationId);
-    List<LoanApplication> getLoanApplicationsByCustomerId(Long customerId);
+    List<LoanApplicationDTO> getLoanApplicationsByCustomerId(Long customerId);
 }

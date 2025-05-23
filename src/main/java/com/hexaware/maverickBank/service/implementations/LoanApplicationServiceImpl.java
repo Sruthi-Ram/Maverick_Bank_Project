@@ -1,18 +1,21 @@
 package com.hexaware.maverickBank.service.implementations;
 
+import com.hexaware.maverickBank.dto.LoanApplicationCreateRequestDTO;
+import com.hexaware.maverickBank.dto.LoanApplicationDTO;
+import com.hexaware.maverickBank.dto.LoanApplicationUpdateRequestDTO;
+import com.hexaware.maverickBank.entity.Customer;
+import com.hexaware.maverickBank.entity.Loan;
+import com.hexaware.maverickBank.entity.LoanApplication;
+import com.hexaware.maverickBank.repository.ILoanApplicationRepository;
+import com.hexaware.maverickBank.service.interfaces.LoanApplicationService;
+import jakarta.validation.ValidationException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.hexaware.maverickBank.entity.LoanApplication;
-import com.hexaware.maverickBank.repository.ILoanApplicationRepository;
-import com.hexaware.maverickBank.service.interfaces.LoanApplicationService;
-
-import jakarta.validation.ValidationException;
 
 @Service
 public class LoanApplicationServiceImpl implements LoanApplicationService {
@@ -37,7 +40,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
-    public LoanApplication createLoanApplication(LoanApplication loanApplication) {
+    public LoanApplicationDTO createLoanApplication(LoanApplicationCreateRequestDTO loanApplicationCreateRequestDTO) {
+        LoanApplication loanApplication = convertCreateRequestDTOtoEntity(loanApplicationCreateRequestDTO);
         if (loanApplication.getCustomer() == null || loanApplication.getCustomer().getCustomerId() == null) {
             throw new ValidationException("Customer ID is required");
         }
@@ -49,27 +53,40 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         validateLoanApplication(loanApplication);
         loanApplication.setApplicationDate(LocalDateTime.now());
         loanApplication.setStatus("Pending"); // Default status
-        return loanApplicationRepository.save(loanApplication);
+        LoanApplication savedApplication = loanApplicationRepository.save(loanApplication);
+        return convertEntityToDTO(savedApplication);
     }
 
     @Override
-    public LoanApplication getLoanApplicationById(Long applicationId) {
-        return loanApplicationRepository.findById(applicationId)
+    public LoanApplicationDTO getLoanApplicationById(Long applicationId) {
+        LoanApplication loanApplication = loanApplicationRepository.findById(applicationId)
                 .orElseThrow(() -> new NoSuchElementException("Loan application not found with ID: " + applicationId));
+        return convertEntityToDTO(loanApplication);
     }
 
     @Override
-    public List<LoanApplication> getAllLoanApplications() {
-        return loanApplicationRepository.findAll();
+    public List<LoanApplicationDTO> getAllLoanApplications() {
+        return loanApplicationRepository.findAll().stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public LoanApplication updateLoanApplication(Long applicationId, LoanApplication loanApplication) {
+    public LoanApplicationDTO updateLoanApplication(Long applicationId, LoanApplicationUpdateRequestDTO loanApplicationUpdateRequestDTO) {
         LoanApplication existingApplication = loanApplicationRepository.findById(applicationId)
                 .orElseThrow(() -> new NoSuchElementException("Loan application not found with ID: " + applicationId));
-        loanApplication.setApplicationId(applicationId);
-        validateLoanApplication(loanApplication);
-        return loanApplicationRepository.save(loanApplication);
+        if (loanApplicationUpdateRequestDTO.getRequestedAmount() != null) {
+            existingApplication.setRequestedAmount(loanApplicationUpdateRequestDTO.getRequestedAmount());
+        }
+        if (loanApplicationUpdateRequestDTO.getPurpose() != null) {
+            existingApplication.setPurpose(loanApplicationUpdateRequestDTO.getPurpose());
+        }
+        if (loanApplicationUpdateRequestDTO.getStatus() != null) {
+            existingApplication.setStatus(loanApplicationUpdateRequestDTO.getStatus());
+        }
+        validateLoanApplication(existingApplication);
+        LoanApplication updatedApplication = loanApplicationRepository.save(existingApplication);
+        return convertEntityToDTO(updatedApplication);
     }
 
     @Override
@@ -81,12 +98,43 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
-    public List<LoanApplication> getLoanApplicationsByCustomerId(Long customerId) {
+    public List<LoanApplicationDTO> getLoanApplicationsByCustomerId(Long customerId) {
         customerService.getCustomerById(customerId); // Ensure customer exists
         List<LoanApplication> applications = loanApplicationRepository.findByCustomer_CustomerId(customerId);
         if (applications.isEmpty()) {
             throw new NoSuchElementException("No loan applications found for Customer ID: " + customerId);
         }
-        return applications;
+        return applications.stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private LoanApplicationDTO convertEntityToDTO(LoanApplication loanApplication) {
+        LoanApplicationDTO dto = new LoanApplicationDTO();
+        dto.setApplicationId(loanApplication.getApplicationId());
+        if (loanApplication.getCustomer() != null) {
+            dto.setCustomerId(loanApplication.getCustomer().getCustomerId());
+        }
+        if (loanApplication.getLoan() != null) {
+            dto.setLoanId(loanApplication.getLoan().getLoanId());
+        }
+        dto.setRequestedAmount(loanApplication.getRequestedAmount());
+        dto.setPurpose(loanApplication.getPurpose());
+        dto.setApplicationDate(loanApplication.getApplicationDate());
+        dto.setStatus(loanApplication.getStatus());
+        return dto;
+    }
+
+    private LoanApplication convertCreateRequestDTOtoEntity(LoanApplicationCreateRequestDTO createRequestDTO) {
+        LoanApplication loanApplication = new LoanApplication();
+        Customer customer = new Customer();
+        customer.setCustomerId(createRequestDTO.getCustomerId());
+        loanApplication.setCustomer(customer);
+        Loan loan = new Loan();
+        loan.setLoanId(createRequestDTO.getLoanId());
+        loanApplication.setLoan(loan);
+        loanApplication.setRequestedAmount(createRequestDTO.getRequestedAmount());
+        loanApplication.setPurpose(createRequestDTO.getPurpose());
+        return loanApplication;
     }
 }

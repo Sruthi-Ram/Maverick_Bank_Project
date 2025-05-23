@@ -1,14 +1,17 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.BankBranch;
 import java.util.List;
 
+import com.hexaware.maverickBank.dto.BankBranchCreateRequestDTO;
+import com.hexaware.maverickBank.dto.BankBranchDTO;
+import com.hexaware.maverickBank.dto.BankBranchUpdateRequestDTO;
+
 public interface BankBranchService {
-    BankBranch createBankBranch(BankBranch branch);
-    BankBranch getBankBranchById(Long branchId);
-    List<BankBranch> getAllBankBranches();
-    BankBranch updateBankBranch(Long branchId, BankBranch branch);
+    BankBranchDTO createBankBranch(BankBranchCreateRequestDTO bankBranchCreateRequestDTO);
+    BankBranchDTO getBankBranchById(Long branchId);
+    List<BankBranchDTO> getAllBankBranches();
+    BankBranchDTO updateBankBranch(Long branchId, BankBranchUpdateRequestDTO bankBranchUpdateRequestDTO);
     void deleteBankBranch(Long branchId);
-    BankBranch getBankBranchByName(String name);
-    BankBranch getBankBranchByIfscPrefix(String ifscPrefix);
+    BankBranchDTO getBankBranchByName(String name);
+    BankBranchDTO getBankBranchByIfscPrefix(String ifscPrefix);
 }

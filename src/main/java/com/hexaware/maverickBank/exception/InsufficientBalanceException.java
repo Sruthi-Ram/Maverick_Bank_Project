@@ -1,14 +1,18 @@
 package com.hexaware.maverickBank.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+public class InsufficientBalanceException extends RuntimeException { // Or Exception, depending on your design
 
-@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Insufficient balance in the account")
-public class InsufficientBalanceException extends RuntimeException {
+    private static final long serialVersionUID = 1L; // You can assign any long value here
+
     public InsufficientBalanceException(String message) {
         super(message);
     }
-    public InsufficientBalanceException() {
-        super("Insufficient balance in the account");
+
+    public InsufficientBalanceException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public InsufficientBalanceException(Throwable cause) {
+        super(cause);
     }
 }

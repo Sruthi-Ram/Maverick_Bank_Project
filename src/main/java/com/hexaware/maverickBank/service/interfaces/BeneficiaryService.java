@@ -1,13 +1,16 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.Beneficiary;
 import java.util.List;
 
+import com.hexaware.maverickBank.dto.BeneficiaryCreateRequestDTO;
+import com.hexaware.maverickBank.dto.BeneficiaryDTO;
+import com.hexaware.maverickBank.dto.BeneficiaryUpdateRequestDTO;
+
 public interface BeneficiaryService {
-    Beneficiary createBeneficiary(Beneficiary beneficiary);
-    Beneficiary getBeneficiaryById(Long beneficiaryId);
-    List<Beneficiary> getAllBeneficiaries();
-    Beneficiary updateBeneficiary(Long beneficiaryId, Beneficiary beneficiary);
+    BeneficiaryDTO createBeneficiary(BeneficiaryCreateRequestDTO beneficiaryCreateRequestDTO);
+    BeneficiaryDTO getBeneficiaryById(Long beneficiaryId);
+    List<BeneficiaryDTO> getAllBeneficiaries();
+    BeneficiaryDTO updateBeneficiary(Long beneficiaryId, BeneficiaryUpdateRequestDTO beneficiaryUpdateRequestDTO);
     void deleteBeneficiary(Long beneficiaryId);
-    List<Beneficiary> getBeneficiariesByCustomerId(Long customerId);
+    List<BeneficiaryDTO> getBeneficiariesByCustomerId(Long customerId);
 }

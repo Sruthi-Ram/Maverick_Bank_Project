@@ -1,13 +1,15 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.Customer;
+import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
+import com.hexaware.maverickBank.dto.CustomerDTO;
+import com.hexaware.maverickBank.dto.CustomerUpdateRequestDTO;
 import java.util.List;
 
 public interface CustomerServcie {
-    Customer createCustomer(Customer customer);
-    Customer getCustomerById(Long customerId);
-    List<Customer> getAllCustomers();
-    Customer updateCustomer(Long customerId, Customer customer);
+    CustomerDTO createCustomer(CustomerCreateRequestDTO customerCreateRequestDTO);
+    CustomerDTO getCustomerById(Long customerId);
+    List<CustomerDTO> getAllCustomers();
+    CustomerDTO updateCustomer(Long customerId, CustomerUpdateRequestDTO customerUpdateRequestDTO);
     void deleteCustomer(Long customerId);
-    Customer getCustomerByUserId(Long userId);
+    CustomerDTO getCustomerByUserId(Long userId);
 }

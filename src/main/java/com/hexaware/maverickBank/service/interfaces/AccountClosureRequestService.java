@@ -1,14 +1,16 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.AccountClosureRequest;
 import java.util.List;
 
+import com.hexaware.maverickBank.dto.AccountClosureRequestCreateRequestDTO;
+import com.hexaware.maverickBank.dto.AccountClosureRequestDTO;
+
 public interface AccountClosureRequestService {
-    AccountClosureRequest createAccountClosureRequest(AccountClosureRequest request);
-    AccountClosureRequest getAccountClosureRequestById(Long closureRequestId);
-    List<AccountClosureRequest> getAllAccountClosureRequests();
-    AccountClosureRequest updateAccountClosureRequest(Long closureRequestId, AccountClosureRequest request);
+    AccountClosureRequestDTO createAccountClosureRequest(AccountClosureRequestCreateRequestDTO requestDTO);
+    AccountClosureRequestDTO getAccountClosureRequestById(Long closureRequestId);
+    List<AccountClosureRequestDTO> getAllAccountClosureRequests();
+    AccountClosureRequestDTO updateAccountClosureRequest(Long closureRequestId, AccountClosureRequestDTO requestDTO);
     void deleteAccountClosureRequest(Long closureRequestId);
-    List<AccountClosureRequest> getAccountClosureRequestsByCustomerId(Long customerId);
-    AccountClosureRequest getAccountClosureRequestByAccountId(Long accountId);
+    List<AccountClosureRequestDTO> getAccountClosureRequestsByCustomerId(Long customerId);
+    AccountClosureRequestDTO getAccountClosureRequestByAccountId(Long accountId);
 }
