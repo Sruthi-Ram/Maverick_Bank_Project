@@ -1,138 +1,111 @@
 package com.hexaware.maverickBank.entity;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Beneficiaries")
+@Table(name = "beneficiaries")
 public class Beneficiary {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "beneficiary_id")
-    private int beneficiaryId;
+    private Long beneficiaryId;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    @Column(name = "beneficiary_account_number", nullable = false, length = 20)
-    private String beneficiaryAccountNumber;
-
-    @Column(name = "beneficiary_name", nullable = false, length = 100)
+    @Column(nullable = false)
     private String beneficiaryName;
 
-    @Column(name = "bank_name", length = 100)
+    @Column(nullable = false)
+    private String accountNumber;
+
+    @Column(nullable = false)
     private String bankName;
 
-    @Column(name = "branch_name", length = 100)
+    @Column(nullable = false)
     private String branchName;
 
-    @Column(name = "ifsc_code", length = 15)
+    @Column(nullable = false)
     private String ifscCode;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @OneToMany(mappedBy = "beneficiary", fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
 
-    // Constructors
-    public Beneficiary() {
-    }
-
-    public Beneficiary(Customer customer, String beneficiaryAccountNumber, String beneficiaryName, String bankName, String branchName, String ifscCode) {
-        this.customer = customer;
-        this.beneficiaryAccountNumber = beneficiaryAccountNumber;
-        this.beneficiaryName = beneficiaryName;
-        this.bankName = bankName;
-        this.branchName = branchName;
-        this.ifscCode = ifscCode;
-    }
-
-    // Getters
-    public int getBeneficiaryId() {
+    public Long getBeneficiaryId() {
         return beneficiaryId;
+    }
+
+    public void setBeneficiaryId(Long beneficiaryId) {
+        this.beneficiaryId = beneficiaryId;
     }
 
     public Customer getCustomer() {
         return customer;
     }
 
-    public String getBeneficiaryAccountNumber() {
-        return beneficiaryAccountNumber;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getBeneficiaryName() {
         return beneficiaryName;
     }
 
-    public String getBankName() {
-        return bankName;
-    }
-
-    public String getBranchName() {
-        return branchName;
-    }
-
-    public String getIfscCode() {
-        return ifscCode;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    // Setters
-    public void setBeneficiaryId(int beneficiaryId) {
-        this.beneficiaryId = beneficiaryId;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public void setBeneficiaryAccountNumber(String beneficiaryAccountNumber) {
-        this.beneficiaryAccountNumber = beneficiaryAccountNumber;
-    }
-
     public void setBeneficiaryName(String beneficiaryName) {
         this.beneficiaryName = beneficiaryName;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getBankName() {
+        return bankName;
     }
 
     public void setBankName(String bankName) {
         this.bankName = bankName;
     }
 
+    public String getBranchName() {
+        return branchName;
+    }
+
     public void setBranchName(String branchName) {
         this.branchName = branchName;
+    }
+
+    public String getIfscCode() {
+        return ifscCode;
     }
 
     public void setIfscCode(String ifscCode) {
         this.ifscCode = ifscCode;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 
-    @Override
-    public String toString() {
-        return "Beneficiary{" +
-                "beneficiaryId=" + beneficiaryId +
-                ", customer=" + (customer != null ? customer.getCustomerId() : null) +
-                ", beneficiaryAccountNumber='" + beneficiaryAccountNumber + '\'' +
-                ", beneficiaryName='" + beneficiaryName + '\'' +
-                ", bankName='" + bankName + '\'' +
-                ", branchName='" + branchName + '\'' +
-                ", ifscCode='" + ifscCode + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     @Override
@@ -140,11 +113,24 @@ public class Beneficiary {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Beneficiary that = (Beneficiary) o;
-        return beneficiaryId == that.beneficiaryId && customer.equals(that.customer) && beneficiaryAccountNumber.equals(that.beneficiaryAccountNumber);
+        return Objects.equals(beneficiaryId, that.beneficiaryId) && Objects.equals(customer, that.customer) && Objects.equals(beneficiaryName, that.beneficiaryName) && Objects.equals(accountNumber, that.accountNumber) && Objects.equals(bankName, that.bankName) && Objects.equals(branchName, that.branchName) && Objects.equals(ifscCode, that.ifscCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(beneficiaryId, customer, beneficiaryAccountNumber);
+        return Objects.hash(beneficiaryId, customer, beneficiaryName, accountNumber, bankName, branchName, ifscCode);
+    }
+
+    @Override
+    public String toString() {
+        return "Beneficiary{" +
+                "beneficiaryId=" + beneficiaryId +
+                ", customer=" + (customer != null ? customer.getCustomerId() : null) +
+                ", beneficiaryName='" + beneficiaryName + '\'' +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", bankName='" + bankName + '\'' +
+                ", branchName='" + branchName + '\'' +
+                ", ifscCode='" + ifscCode + '\'' +
+                '}';
     }
 }

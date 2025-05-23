@@ -16,61 +16,61 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.service.interfaces.CustomerServcie;
+import com.hexaware.maverickBank.entity.Beneficiary;
+import com.hexaware.maverickBank.service.interfaces.BeneficiaryService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/customers")
-public class CustomerController {
+@RequestMapping("/api/v1/beneficiaries")
+public class BeneficiaryController {
 
     @Autowired
-    private CustomerServcie customerService;
+    private BeneficiaryService beneficiaryService;
 
-    @PostMapping("/createCustomer")
+    @PostMapping("/createBeneficiary")
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer createCustomer(@Valid @RequestBody Customer customer) {
-        return customerService.createCustomer(customer);
+    public Beneficiary createBeneficiary(@Valid @RequestBody Beneficiary beneficiary) {
+        return beneficiaryService.createBeneficiary(beneficiary);
     }
 
-    @GetMapping("/getCustomerById/{customerId}")
-    public Customer getCustomerById(@PathVariable Long customerId) {
+    @GetMapping("/getBeneficiaryById/{beneficiaryId}")
+    public Beneficiary getBeneficiaryById(@PathVariable Long beneficiaryId) {
         try {
-            return customerService.getCustomerById(customerId);
+            return beneficiaryService.getBeneficiaryById(beneficiaryId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @GetMapping("/getAllCustomers")
-    public List<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
+    @GetMapping("/getAllBeneficiaries")
+    public List<Beneficiary> getAllBeneficiaries() {
+        return beneficiaryService.getAllBeneficiaries();
     }
 
-    @PutMapping("/updateCustomer/{customerId}")
-    public Customer updateCustomer(@PathVariable Long customerId, @Valid @RequestBody Customer customer) {
+    @PutMapping("/updateBeneficiary/{beneficiaryId}")
+    public Beneficiary updateBeneficiary(@PathVariable Long beneficiaryId, @Valid @RequestBody Beneficiary beneficiary) {
         try {
-            return customerService.updateCustomer(customerId, customer);
+            return beneficiaryService.updateBeneficiary(beneficiaryId, beneficiary);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @DeleteMapping("/deleteCustomer/{customerId}")
+    @DeleteMapping("/deleteBeneficiary/{beneficiaryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCustomer(@PathVariable Long customerId) {
+    public void deleteBeneficiary(@PathVariable Long beneficiaryId) {
         try {
-            customerService.deleteCustomer(customerId);
+            beneficiaryService.deleteBeneficiary(beneficiaryId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @GetMapping("/getCustomerByUserId/{userId}")
-    public Customer getCustomerByUserId(@PathVariable Long userId) {
+    @GetMapping("/getBeneficiariesByCustomerId/{customerId}")
+    public List<Beneficiary> getBeneficiariesByCustomerId(@PathVariable Long customerId) {
         try {
-            return customerService.getCustomerByUserId(userId);
+            return beneficiaryService.getBeneficiariesByCustomerId(customerId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

@@ -16,61 +16,61 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.service.interfaces.CustomerServcie;
+import com.hexaware.maverickBank.entity.BankEmployee;
+import com.hexaware.maverickBank.service.interfaces.BankEmployeeService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/customers")
-public class CustomerController {
+@RequestMapping("/api/v1/employees")
+public class BankEmployeeController {
 
     @Autowired
-    private CustomerServcie customerService;
+    private BankEmployeeService bankEmployeeService;
 
-    @PostMapping("/createCustomer")
+    @PostMapping("/createBankEmployee")
     @ResponseStatus(HttpStatus.CREATED)
-    public Customer createCustomer(@Valid @RequestBody Customer customer) {
-        return customerService.createCustomer(customer);
+    public BankEmployee createBankEmployee(@Valid @RequestBody BankEmployee bankEmployee) {
+        return bankEmployeeService.createBankEmployee(bankEmployee);
     }
 
-    @GetMapping("/getCustomerById/{customerId}")
-    public Customer getCustomerById(@PathVariable Long customerId) {
+    @GetMapping("/getBankEmployeeById/{employeeId}")
+    public BankEmployee getBankEmployeeById(@PathVariable Long employeeId) {
         try {
-            return customerService.getCustomerById(customerId);
+            return bankEmployeeService.getBankEmployeeById(employeeId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @GetMapping("/getAllCustomers")
-    public List<Customer> getAllCustomers() {
-        return customerService.getAllCustomers();
+    @GetMapping("/getAllBankEmployees")
+    public List<BankEmployee> getAllBankEmployees() {
+        return bankEmployeeService.getAllBankEmployees();
     }
 
-    @PutMapping("/updateCustomer/{customerId}")
-    public Customer updateCustomer(@PathVariable Long customerId, @Valid @RequestBody Customer customer) {
+    @PutMapping("/updateBankEmployee/{employeeId}")
+    public BankEmployee updateBankEmployee(@PathVariable Long employeeId, @Valid @RequestBody BankEmployee bankEmployee) {
         try {
-            return customerService.updateCustomer(customerId, customer);
+            return bankEmployeeService.updateBankEmployee(employeeId, bankEmployee);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @DeleteMapping("/deleteCustomer/{customerId}")
+    @DeleteMapping("/deleteBankEmployee/{employeeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCustomer(@PathVariable Long customerId) {
+    public void deleteBankEmployee(@PathVariable Long employeeId) {
         try {
-            customerService.deleteCustomer(customerId);
+            bankEmployeeService.deleteBankEmployee(employeeId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @GetMapping("/getCustomerByUserId/{userId}")
-    public Customer getCustomerByUserId(@PathVariable Long userId) {
+    @GetMapping("/getBankEmployeeByUserId/{userId}")
+    public BankEmployee getBankEmployeeByUserId(@PathVariable Long userId) {
         try {
-            return customerService.getCustomerByUserId(userId);
+            return bankEmployeeService.getBankEmployeeByUserId(userId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

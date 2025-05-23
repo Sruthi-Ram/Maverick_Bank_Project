@@ -1,5 +1,6 @@
 package com.hexaware.maverickBank.controller;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,61 +12,56 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.service.interfaces.UserService;
+import com.hexaware.maverickBank.entity.Loan;
+import com.hexaware.maverickBank.service.interfaces.LoanService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/users")
-public class UserController {
+@RequestMapping("/api/v1/loans")
+public class LoanController {
 
     @Autowired
-    private UserService userService;
+    private LoanService loanService;
 
-    @PostMapping("/register")
+    @PostMapping("/createLoan")
     @ResponseStatus(HttpStatus.CREATED)
-    public User registerUser(@Valid @RequestBody User user) {
-        return userService.registerUser(user);
+    public Loan createLoan(@Valid @RequestBody Loan loan) {
+        return loanService.createLoan(loan);
     }
 
-    @PostMapping("/login")
-    public User loginUser(@RequestParam String identifier, @RequestParam String password) {
-        User user = userService.loginUser(identifier, password);
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
-        }
-        return user;
-    }
-
-    @GetMapping("/getUserById/{userId}")
-    public User getUserById(@PathVariable Long userId) {
+    @GetMapping("/getLoanById/{loanId}")
+    public Loan getLoanById(@PathVariable Long loanId) {
         try {
-            return userService.getUserById(userId);
+            return loanService.getLoanById(loanId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @PutMapping("/updateUser/{userId}")
-    public User updateUser(@PathVariable Long userId, @RequestBody User user) {
+    @GetMapping("/getAllLoans")
+    public List<Loan> getAllLoans() {
+        return loanService.getAllLoans();
+    }
+
+    @PutMapping("/updateLoan{loanId}")
+    public Loan updateLoan(@PathVariable Long loanId, @Valid @RequestBody Loan loan) {
         try {
-            return userService.updateUser(userId, user.getPassword(), user.getEmail(), user.getRole().getName(), null); // Status update logic needed
+            return loanService.updateLoan(loanId, loan);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @DeleteMapping("/deleteUser/{userId}")
+    @DeleteMapping("/deleteLoan{loanId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long userId) {
+    public void deleteLoan(@PathVariable Long loanId) {
         try {
-            userService.deleteUser(userId);
+            loanService.deleteLoan(loanId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }

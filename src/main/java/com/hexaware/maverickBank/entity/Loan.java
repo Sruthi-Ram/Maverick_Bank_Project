@@ -1,124 +1,108 @@
 package com.hexaware.maverickBank.entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Loans")
+@Table(name = "loans")
 public class Loan {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "loan_id")
-    private int loanId;
+    private Long loanId;
 
-    @Column(name = "loan_name", nullable = false, length = 100)
-    private String loanName;
+    @Column(nullable = false)
+    private String loanType;
 
-    @Column(name = "interest_rate", nullable = false, precision = 5, scale = 2)
+    @Column(nullable = false)
+    private BigDecimal principalAmount;
+
+    @Column(nullable = false)
     private BigDecimal interestRate;
 
-    @Column(name = "tenure_months")
+    @Column(nullable = false)
     private Integer tenureMonths;
 
-    @Lob
-    @Column(name = "description")
-    private String description;
+    private BigDecimal amountPaid;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String status; // e.g., Approved, Disbursed, Repaid, Pending
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<LoanApplication> loanApplications;
 
-    // Constructors
-    public Loan() {
-    }
-
-    public Loan(String loanName, BigDecimal interestRate, Integer tenureMonths, String description) {
-        this.loanName = loanName;
-        this.interestRate = interestRate;
-        this.tenureMonths = tenureMonths;
-        this.description = description;
-    }
-
-    // Getters
-    public int getLoanId() {
+    public Long getLoanId() {
         return loanId;
     }
 
-    public String getLoanName() {
-        return loanName;
+    public void setLoanId(Long loanId) {
+        this.loanId = loanId;
+    }
+
+    public String getLoanType() {
+        return loanType;
+    }
+
+    public void setLoanType(String loanType) {
+        this.loanType = loanType;
+    }
+
+    public BigDecimal getPrincipalAmount() {
+        return principalAmount;
+    }
+
+    public void setPrincipalAmount(BigDecimal principalAmount) {
+        this.principalAmount = principalAmount;
     }
 
     public BigDecimal getInterestRate() {
         return interestRate;
     }
 
-    public Integer getTenureMonths() {
-        return tenureMonths;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    // Setters
-    public void setLoanId(int loanId) {
-        this.loanId = loanId;
-    }
-
-    public void setLoanName(String loanName) {
-        this.loanName = loanName;
-    }
-
     public void setInterestRate(BigDecimal interestRate) {
         this.interestRate = interestRate;
+    }
+
+    public Integer getTenureMonths() {
+        return tenureMonths;
     }
 
     public void setTenureMonths(Integer tenureMonths) {
         this.tenureMonths = tenureMonths;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public BigDecimal getAmountPaid() {
+        return amountPaid;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setAmountPaid(BigDecimal amountPaid) {
+        this.amountPaid = amountPaid;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public String getStatus() {
+        return status;
     }
 
-    @Override
-    public String toString() {
-        return "Loan{" +
-                "loanId=" + loanId +
-                ", loanName='" + loanName + '\'' +
-                ", interestRate=" + interestRate +
-                ", tenureMonths=" + tenureMonths +
-                ", description='" + description + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<LoanApplication> getLoanApplications() {
+        return loanApplications;
+    }
+
+    public void setLoanApplications(List<LoanApplication> loanApplications) {
+        this.loanApplications = loanApplications;
     }
 
     @Override
@@ -126,11 +110,24 @@ public class Loan {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Loan loan = (Loan) o;
-        return loanId == loan.loanId && loanName.equals(loan.loanName) && interestRate.equals(loan.interestRate) && Objects.equals(tenureMonths, loan.tenureMonths);
+        return Objects.equals(loanId, loan.loanId) && Objects.equals(loanType, loan.loanType) && Objects.equals(principalAmount, loan.principalAmount) && Objects.equals(interestRate, loan.interestRate) && Objects.equals(tenureMonths, loan.tenureMonths) && Objects.equals(amountPaid, loan.amountPaid) && Objects.equals(status, loan.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(loanId, loanName, interestRate, tenureMonths);
+        return Objects.hash(loanId, loanType, principalAmount, interestRate, tenureMonths, amountPaid, status);
+    }
+
+    @Override
+    public String toString() {
+        return "Loan{" +
+                "loanId=" + loanId +
+                ", loanType='" + loanType + '\'' +
+                ", principalAmount=" + principalAmount +
+                ", interestRate=" + interestRate +
+                ", tenureMonths=" + tenureMonths +
+                ", amountPaid=" + amountPaid +
+                ", status='" + status + '\'' +
+                '}';
     }
 }

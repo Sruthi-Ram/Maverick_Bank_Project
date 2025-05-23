@@ -1,59 +1,66 @@
 package com.hexaware.maverickBank.entity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Customers")
+@Table(name = "customers")
 public class Customer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int customerId;
+    private Long customerId;
+
+    @Column(nullable = false)
+    private String name;
+
+    private String gender;
+
+    private String contactNumber;
+
+    private String address;
+
+    private LocalDate dateOfBirth;
+
+    private String aadharNumber;
+
+    private String panNumber;
 
     @OneToOne
-    @JoinColumn(name = "userId", unique = true)
-    @JsonBackReference
+    @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
-    private String name;
-    private String gender;
-    private String contactNumber;
-    private String address;
-    private LocalDate dateOfBirth;
-    private String aadharNumber;
-    private String panNumber;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    public Customer() {
-    }
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Account> accounts;
 
-    public int getCustomerId() {
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Beneficiary> beneficiaries;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<LoanApplication> loanApplications;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccountClosureRequest> accountClosureRequests;
+
+    public Long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(Long customerId) {
         this.customerId = customerId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-        if (user != null && user.getCustomer() != this) {
-            user.setCustomer(this);
-        }
     }
 
     public String getName() {
@@ -112,20 +119,57 @@ public class Customer {
         this.panNumber = panNumber;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public User getUser() {
+        return user;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public List<Account> getAccounts() {
+        return accounts;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    public List<Beneficiary> getBeneficiaries() {
+        return beneficiaries;
+    }
+
+    public void setBeneficiaries(List<Beneficiary> beneficiaries) {
+        this.beneficiaries = beneficiaries;
+    }
+
+    public List<LoanApplication> getLoanApplications() {
+        return loanApplications;
+    }
+
+    public void setLoanApplications(List<LoanApplication> loanApplications) {
+        this.loanApplications = loanApplications;
+    }
+
+    public List<AccountClosureRequest> getAccountClosureRequests() {
+        return accountClosureRequests;
+    }
+
+    public void setAccountClosureRequests(List<AccountClosureRequest> accountClosureRequests) {
+        this.accountClosureRequests = accountClosureRequests;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(customerId, customer.customerId) && Objects.equals(name, customer.name) && Objects.equals(gender, customer.gender) && Objects.equals(contactNumber, customer.contactNumber) && Objects.equals(address, customer.address) && Objects.equals(dateOfBirth, customer.dateOfBirth) && Objects.equals(aadharNumber, customer.aadharNumber) && Objects.equals(panNumber, customer.panNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(customerId, name, gender, contactNumber, address, dateOfBirth, aadharNumber, panNumber);
     }
 
     @Override
@@ -139,8 +183,7 @@ public class Customer {
                 ", dateOfBirth=" + dateOfBirth +
                 ", aadharNumber='" + aadharNumber + '\'' +
                 ", panNumber='" + panNumber + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", user=" + (user != null ? user.getUserId() : null) +
                 '}';
     }
 }

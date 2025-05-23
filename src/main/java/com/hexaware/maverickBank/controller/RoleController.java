@@ -1,5 +1,6 @@
 package com.hexaware.maverickBank.controller;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,61 +12,65 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.service.interfaces.UserService;
+import com.hexaware.maverickBank.entity.Role;
+import com.hexaware.maverickBank.service.interfaces.RoleService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/users")
-public class UserController {
+@RequestMapping("/api/v1/roles")
+public class RoleController {
 
     @Autowired
-    private UserService userService;
+    private RoleService roleService;
 
-    @PostMapping("/register")
+    @PostMapping("/createRole")
     @ResponseStatus(HttpStatus.CREATED)
-    public User registerUser(@Valid @RequestBody User user) {
-        return userService.registerUser(user);
+    public Role createRole(@Valid @RequestBody Role role) {
+        return roleService.createRole(role);
     }
 
-    @PostMapping("/login")
-    public User loginUser(@RequestParam String identifier, @RequestParam String password) {
-        User user = userService.loginUser(identifier, password);
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
-        }
-        return user;
-    }
-
-    @GetMapping("/getUserById/{userId}")
-    public User getUserById(@PathVariable Long userId) {
+    @GetMapping("/getRoleById/{roleId}")
+    public Role getRoleById(@PathVariable Long roleId) {
         try {
-            return userService.getUserById(userId);
+            return roleService.getRoleById(roleId);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @PutMapping("/updateUser/{userId}")
-    public User updateUser(@PathVariable Long userId, @RequestBody User user) {
+    @GetMapping("/getAllRoles")
+    public List<Role> getAllRoles() {
+        return roleService.getAllRoles();
+    }
+
+    @PutMapping("/updateRole/{roleId}")
+    public Role updateRole(@PathVariable Long roleId, @Valid @RequestBody Role role) {
         try {
-            return userService.updateUser(userId, user.getPassword(), user.getEmail(), user.getRole().getName(), null); // Status update logic needed
+            return roleService.updateRole(roleId, role);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
-    @DeleteMapping("/deleteUser/{userId}")
+    @DeleteMapping("/deleteRole/{roleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long userId) {
+    public void deleteRole(@PathVariable Long roleId) {
         try {
-            userService.deleteUser(userId);
+            roleService.deleteRole(roleId);
+        } catch (NoSuchElementException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+    }
+
+    @GetMapping("/getRoleByName/{name}")
+    public Role getRoleByName(@PathVariable String name) {
+        try {
+            return roleService.getRoleByName(name);
         } catch (NoSuchElementException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
