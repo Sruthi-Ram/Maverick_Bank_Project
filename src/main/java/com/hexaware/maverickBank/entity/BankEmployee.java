@@ -1,6 +1,5 @@
 package com.hexaware.maverickBank.entity;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -9,91 +8,82 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "BankEmployees")
+@Table(name = "bank_employees")
 public class BankEmployee {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "employee_id")
-    private int employeeId;
+    private Long employeeId;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true, nullable = false)
     private User user;
 
-    @Column(name = "name", nullable = false, length = 100)
+    @Column(nullable = false)
     private String name;
 
-    @Column(name = "designation", length = 50)
-    private String designation;
+    private String contactNumber;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @ManyToOne
+    @JoinColumn(name = "branch_id", nullable = false)
+    private BankBranch branch;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
-
-    // Constructors
-    public BankEmployee() {
-    }
-
-    public BankEmployee(User user, String name, String designation) {
-        this.user = user;
-        this.name = name;
-        this.designation = designation;
-    }
-
-    // Getters
-    public int getEmployeeId() {
+    public Long getEmployeeId() {
         return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public User getUser() {
         return user;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    // Setters
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
-
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setDesignation(String designation) {
-        this.designation = designation;
+    public String getContactNumber() {
+        return contactNumber;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public BankBranch getBranch() {
+        return branch;
+    }
+
+    public void setBranch(BankBranch branch) {
+        this.branch = branch;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BankEmployee that = (BankEmployee) o;
+        return Objects.equals(employeeId, that.employeeId) && Objects.equals(user, that.user) && Objects.equals(name, that.name) && Objects.equals(contactNumber, that.contactNumber) && Objects.equals(branch, that.branch);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId, user, name, contactNumber, branch);
     }
 
     @Override
@@ -102,22 +92,8 @@ public class BankEmployee {
                 "employeeId=" + employeeId +
                 ", user=" + (user != null ? user.getUserId() : null) +
                 ", name='" + name + '\'' +
-                ", designation='" + designation + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", contactNumber='" + contactNumber + '\'' +
+                ", branch=" + (branch != null ? branch.getBranchId() : null) +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BankEmployee that = (BankEmployee) o;
-        return employeeId == that.employeeId && user.equals(that.user);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(employeeId, user);
     }
 }

@@ -14,126 +14,85 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Transactions")
+@Table(name = "transactions")
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transaction_id")
-    private int transactionId;
+    private Long transactionId;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
-    @Column(name = "transaction_type", nullable = false, length = 20)
-    private String transactionType; // "deposit", "withdrawal", "transfer"
+    @Column(nullable = false)
+    private String transactionType;
 
-    @Column(name = "amount", nullable = false, precision = 15, scale = 2)
+    @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "transaction_date", updatable = false)
-    private LocalDateTime transactionDate = LocalDateTime.now();
+    private LocalDateTime transactionDate;
 
-    @Column(name = "description", length = 255)
     private String description;
 
-    @Column(name = "reference_account_number", length = 20)
-    private String referenceAccountNumber; // For transfers
+    @ManyToOne
+    @JoinColumn(name = "beneficiary_id")
+    private Beneficiary beneficiary;
 
-    @Column(name = "status", length = 10)
-    private String status; // "pending", "completed", "failed"
-
-    // Constructors
-    public Transaction() {
-    }
-
-    public Transaction(Account account, String transactionType, BigDecimal amount, String description, String referenceAccountNumber, String status) {
-        this.account = account;
-        this.transactionType = transactionType;
-        this.amount = amount;
-        this.description = description;
-        this.referenceAccountNumber = referenceAccountNumber;
-        this.status = status;
-    }
-
-    // Getters
-    public int getTransactionId() {
+    public Long getTransactionId() {
         return transactionId;
+    }
+
+    public void setTransactionId(Long transactionId) {
+        this.transactionId = transactionId;
     }
 
     public Account getAccount() {
         return account;
     }
 
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public LocalDateTime getTransactionDate() {
-        return transactionDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getReferenceAccountNumber() {
-        return referenceAccountNumber;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    // Setters
-    public void setTransactionId(int transactionId) {
-        this.transactionId = transactionId;
-    }
-
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
     }
 
     public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
     }
 
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public LocalDateTime getTransactionDate() {
+        return transactionDate;
     }
 
     public void setTransactionDate(LocalDateTime transactionDate) {
         this.transactionDate = transactionDate;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setReferenceAccountNumber(String referenceAccountNumber) {
-        this.referenceAccountNumber = referenceAccountNumber;
+    public Beneficiary getBeneficiary() {
+        return beneficiary;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "Transaction{" +
-                "transactionId=" + transactionId +
-                ", account=" + (account != null ? account.getAccountId() : null) +
-                ", transactionType='" + transactionType + '\'' +
-                ", amount=" + amount +
-                ", transactionDate=" + transactionDate +
-                ", description='" + description + '\'' +
-                ", referenceAccountNumber='" + referenceAccountNumber + '\'' +
-                ", status='" + status + '\'' +
-                '}';
+    public void setBeneficiary(Beneficiary beneficiary) {
+        this.beneficiary = beneficiary;
     }
 
     @Override
@@ -141,11 +100,24 @@ public class Transaction {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return transactionId == that.transactionId && account.equals(that.account);
+        return Objects.equals(transactionId, that.transactionId) && Objects.equals(account, that.account) && Objects.equals(transactionType, that.transactionType) && Objects.equals(amount, that.amount) && Objects.equals(transactionDate, that.transactionDate) && Objects.equals(description, that.description) && Objects.equals(beneficiary, that.beneficiary);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionId, account);
+        return Objects.hash(transactionId, account, transactionType, amount, transactionDate, description, beneficiary);
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "transactionId=" + transactionId +
+                ", account=" + (account != null ? account.getAccountNumber() : null) +
+                ", transactionType='" + transactionType + '\'' +
+                ", amount=" + amount +
+                ", transactionDate=" + transactionDate +
+                ", description='" + description + '\'' +
+                ", beneficiary=" + (beneficiary != null ? beneficiary.getBeneficiaryId() : null) +
+                '}';
     }
 }

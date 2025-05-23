@@ -1,96 +1,86 @@
 package com.hexaware.maverickBank.entity;
 
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "BankBranches")
+@Table(name = "bank_branches")
 public class BankBranch {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "branch_id")
-    private int branchId;
+    private Long branchId;
 
-    @Column(name = "bank_name", nullable = false, length = 100)
-    private String bankName;
+    @Column(nullable = false)
+    private String name;
 
-    @Column(name = "branch_name", nullable = false, length = 100)
-    private String branchName;
-
-    @Column(name = "ifsc_code", unique = true, nullable = false, length = 15)
-    private String ifscCode;
-
-    @Column(name = "address", length = 255)
+    @Column(nullable = false)
     private String address;
 
-    // Constructors
-    public BankBranch() {
-    }
+    @Column(nullable = false)
+    private String ifscPrefix;
 
-    public BankBranch(String bankName, String branchName, String ifscCode, String address) {
-        this.bankName = bankName;
-        this.branchName = branchName;
-        this.ifscCode = ifscCode;
-        this.address = address;
-    }
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    private List<Account> accounts;
 
-    // Getters
-    public int getBranchId() {
+    @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    private List<BankEmployee> employees;
+
+    public Long getBranchId() {
         return branchId;
     }
 
-    public String getBankName() {
-        return bankName;
+    public void setBranchId(Long branchId) {
+        this.branchId = branchId;
     }
 
-    public String getBranchName() {
-        return branchName;
+    public String getName() {
+        return name;
     }
 
-    public String getIfscCode() {
-        return ifscCode;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAddress() {
         return address;
     }
 
-    // Setters
-    public void setBranchId(int branchId) {
-        this.branchId = branchId;
-    }
-
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
-
-    public void setBranchName(String branchName) {
-        this.branchName = branchName;
-    }
-
-    public void setIfscCode(String ifscCode) {
-        this.ifscCode = ifscCode;
-    }
-
     public void setAddress(String address) {
         this.address = address;
     }
 
-    @Override
-    public String toString() {
-        return "BankBranch{" +
-                "branchId=" + branchId +
-                ", bankName='" + bankName + '\'' +
-                ", branchName='" + branchName + '\'' +
-                ", ifscCode='" + ifscCode + '\'' +
-                ", address='" + address + '\'' +
-                '}';
+    public String getIfscPrefix() {
+        return ifscPrefix;
+    }
+
+    public void setIfscPrefix(String ifscPrefix) {
+        this.ifscPrefix = ifscPrefix;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    public List<BankEmployee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(List<BankEmployee> employees) {
+        this.employees = employees;
     }
 
     @Override
@@ -98,11 +88,21 @@ public class BankBranch {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BankBranch that = (BankBranch) o;
-        return branchId == that.branchId && bankName.equals(that.bankName) && branchName.equals(that.branchName) && ifscCode.equals(that.ifscCode);
+        return Objects.equals(branchId, that.branchId) && Objects.equals(name, that.name) && Objects.equals(address, that.address) && Objects.equals(ifscPrefix, that.ifscPrefix);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(branchId, bankName, branchName, ifscCode);
+        return Objects.hash(branchId, name, address, ifscPrefix);
+    }
+
+    @Override
+    public String toString() {
+        return "BankBranch{" +
+                "branchId=" + branchId +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", ifscPrefix='" + ifscPrefix + '\'' +
+                '}';
     }
 }
