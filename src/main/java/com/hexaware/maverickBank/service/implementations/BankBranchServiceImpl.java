@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hexaware.maverickBank.dto.BankBranchCreateRequestDTO;
+import com.hexaware.maverickBank.dto.BankBranchDTO;
+import com.hexaware.maverickBank.dto.BankBranchUpdateRequestDTO;
 import com.hexaware.maverickBank.entity.BankBranch;
 import com.hexaware.maverickBank.repository.IBankBranchRepository;
 import com.hexaware.maverickBank.service.interfaces.BankBranchService;
@@ -27,7 +31,8 @@ public class BankBranchServiceImpl implements BankBranchService {
     }
 
     @Override
-    public BankBranch createBankBranch(BankBranch branch) {
+    public BankBranchDTO createBankBranch(BankBranchCreateRequestDTO bankBranchCreateRequestDTO) {
+        BankBranch branch = convertCreateRequestDTOtoEntity(bankBranchCreateRequestDTO);
         if (branch.getName() == null || branch.getName().isEmpty()) {
             throw new ValidationException("Branch name cannot be empty");
         }
@@ -43,35 +48,40 @@ public class BankBranchServiceImpl implements BankBranchService {
         if (bankBranchRepository.findByIfscPrefix(branch.getIfscPrefix()) != null) {
             throw new ValidationException("Branch with IFSC prefix " + branch.getIfscPrefix() + " already exists");
         }
-        return bankBranchRepository.save(branch);
+        BankBranch savedBranch = bankBranchRepository.save(branch);
+        return convertEntityToDTO(savedBranch);
     }
 
     @Override
-    public BankBranch getBankBranchById(Long branchId) {
-        return bankBranchRepository.findById(branchId)
+    public BankBranchDTO getBankBranchById(Long branchId) {
+        BankBranch branch = bankBranchRepository.findById(branchId)
                 .orElseThrow(() -> new NoSuchElementException("Bank branch not found with ID: " + branchId));
+        return convertEntityToDTO(branch);
     }
 
     @Override
-    public List<BankBranch> getAllBankBranches() {
-        return bankBranchRepository.findAll();
+    public List<BankBranchDTO> getAllBankBranches() {
+        return bankBranchRepository.findAll().stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public BankBranch updateBankBranch(Long branchId, BankBranch branch) {
+    public BankBranchDTO updateBankBranch(Long branchId, BankBranchUpdateRequestDTO bankBranchUpdateRequestDTO) {
         BankBranch existingBranch = bankBranchRepository.findById(branchId)
                 .orElseThrow(() -> new NoSuchElementException("Bank branch not found with ID: " + branchId));
-        if (branch.getName() != null && !branch.getName().isEmpty() && !existingBranch.getName().equals(branch.getName()) && bankBranchRepository.findByName(branch.getName()) != null) {
-            throw new ValidationException("Branch with name " + branch.getName() + " already exists");
+        if (bankBranchUpdateRequestDTO.getName() != null && !bankBranchUpdateRequestDTO.getName().isEmpty() && !existingBranch.getName().equals(bankBranchUpdateRequestDTO.getName()) && bankBranchRepository.findByName(bankBranchUpdateRequestDTO.getName()) != null) {
+            throw new ValidationException("Branch with name " + bankBranchUpdateRequestDTO.getName() + " already exists");
         }
-        if (branch.getIfscPrefix() != null && !branch.getIfscPrefix().isEmpty() && !existingBranch.getIfscPrefix().equals(branch.getIfscPrefix()) && bankBranchRepository.findByIfscPrefix(branch.getIfscPrefix()) != null) {
-            throw new ValidationException("Branch with IFSC prefix " + branch.getIfscPrefix() + " already exists");
+        if (bankBranchUpdateRequestDTO.getIfscPrefix() != null && !bankBranchUpdateRequestDTO.getIfscPrefix().isEmpty() && !existingBranch.getIfscPrefix().equals(bankBranchUpdateRequestDTO.getIfscPrefix()) && bankBranchRepository.findByIfscPrefix(bankBranchUpdateRequestDTO.getIfscPrefix()) != null) {
+            throw new ValidationException("Branch with IFSC prefix " + bankBranchUpdateRequestDTO.getIfscPrefix() + " already exists");
         }
-        branch.setBranchId(branchId);
-        if (branch.getName() != null) existingBranch.setName(branch.getName());
-        if (branch.getAddress() != null) existingBranch.setAddress(branch.getAddress());
-        if (branch.getIfscPrefix() != null) existingBranch.setIfscPrefix(branch.getIfscPrefix());
-        return bankBranchRepository.save(existingBranch);
+        existingBranch.setBranchId(branchId);
+        if (bankBranchUpdateRequestDTO.getName() != null) existingBranch.setName(bankBranchUpdateRequestDTO.getName());
+        if (bankBranchUpdateRequestDTO.getAddress() != null) existingBranch.setAddress(bankBranchUpdateRequestDTO.getAddress());
+        if (bankBranchUpdateRequestDTO.getIfscPrefix() != null) existingBranch.setIfscPrefix(bankBranchUpdateRequestDTO.getIfscPrefix());
+        BankBranch updatedBranch = bankBranchRepository.save(existingBranch);
+        return convertEntityToDTO(updatedBranch);
     }
 
     @Override
@@ -84,20 +94,32 @@ public class BankBranchServiceImpl implements BankBranchService {
     }
 
     @Override
-    public BankBranch getBankBranchByName(String name) {
+    public BankBranchDTO getBankBranchByName(String name) {
         BankBranch branch = bankBranchRepository.findByName(name);
         if (branch == null) {
             throw new NoSuchElementException("Bank branch not found with name: " + name);
         }
-        return branch;
+        return convertEntityToDTO(branch);
     }
 
     @Override
-    public BankBranch getBankBranchByIfscPrefix(String ifscPrefix) {
+    public BankBranchDTO getBankBranchByIfscPrefix(String ifscPrefix) {
         BankBranch branch = bankBranchRepository.findByIfscPrefix(ifscPrefix);
         if (branch == null) {
             throw new NoSuchElementException("Bank branch not found with IFSC prefix: " + ifscPrefix);
         }
+        return convertEntityToDTO(branch);
+    }
+
+    private BankBranchDTO convertEntityToDTO(BankBranch branch) {
+        return new BankBranchDTO(branch.getBranchId(), branch.getName(), branch.getAddress(), branch.getIfscPrefix());
+    }
+
+    private BankBranch convertCreateRequestDTOtoEntity(BankBranchCreateRequestDTO createRequestDTO) {
+        BankBranch branch = new BankBranch();
+        branch.setName(createRequestDTO.getName());
+        branch.setAddress(createRequestDTO.getAddress());
+        branch.setIfscPrefix(createRequestDTO.getIfscPrefix());
         return branch;
     }
 }

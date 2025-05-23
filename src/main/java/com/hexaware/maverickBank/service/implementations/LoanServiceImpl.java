@@ -3,10 +3,14 @@ package com.hexaware.maverickBank.service.implementations;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hexaware.maverickBank.dto.LoanCreateRequestDTO;
+import com.hexaware.maverickBank.dto.LoanDTO;
+import com.hexaware.maverickBank.dto.LoanUpdateRequestDTO;
 import com.hexaware.maverickBank.entity.Loan;
 import com.hexaware.maverickBank.repository.ILoanRepository;
 import com.hexaware.maverickBank.service.interfaces.LoanService;
@@ -35,30 +39,49 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public Loan createLoan(Loan loan) {
+    public LoanDTO createLoan(LoanCreateRequestDTO loanCreateRequestDTO) {
+        Loan loan = convertCreateRequestDTOtoEntity(loanCreateRequestDTO);
         validateLoan(loan);
-        return loanRepository.save(loan);
+        Loan savedLoan = loanRepository.save(loan);
+        return convertEntityToDTO(savedLoan);
     }
 
     @Override
-    public Loan getLoanById(Long loanId) {
-        return loanRepository.findById(loanId)
+    public LoanDTO getLoanById(Long loanId) {
+        Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new NoSuchElementException("Loan not found with ID: " + loanId));
+        return convertEntityToDTO(loan);
     }
 
     @Override
-    public List<Loan> getAllLoans() {
-        return loanRepository.findAll();
+    public List<LoanDTO> getAllLoans() {
+        return loanRepository.findAll().stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Loan updateLoan(Long loanId, Loan loan) {
-        if (!loanRepository.existsById(loanId)) {
-            throw new NoSuchElementException("Loan not found with ID: " + loanId);
+    public LoanDTO updateLoan(Long loanId, LoanUpdateRequestDTO loanUpdateRequestDTO) {
+        Loan existingLoan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new NoSuchElementException("Loan not found with ID: " + loanId));
+        if (loanUpdateRequestDTO.getPrincipalAmount() != null) {
+            existingLoan.setPrincipalAmount(loanUpdateRequestDTO.getPrincipalAmount());
         }
-        loan.setLoanId(loanId);
-        validateLoan(loan);
-        return loanRepository.save(loan);
+        if (loanUpdateRequestDTO.getInterestRate() != null) {
+            existingLoan.setInterestRate(loanUpdateRequestDTO.getInterestRate());
+        }
+        if (loanUpdateRequestDTO.getTenureMonths() != null) {
+            existingLoan.setTenureMonths(loanUpdateRequestDTO.getTenureMonths());
+        }
+        if (loanUpdateRequestDTO.getAmountPaid() != null) {
+            existingLoan.setAmountPaid(loanUpdateRequestDTO.getAmountPaid());
+        }
+        if (loanUpdateRequestDTO.getStatus() != null) {
+            existingLoan.setStatus(loanUpdateRequestDTO.getStatus());
+        }
+        validateLoan(existingLoan);
+        Loan updatedLoan = loanRepository.save(existingLoan);
+        return convertEntityToDTO(updatedLoan);
     }
 
     @Override
@@ -68,5 +91,26 @@ public class LoanServiceImpl implements LoanService {
         }
         // Consider adding logic to prevent deleting loans with active applications or disbursements
         loanRepository.deleteById(loanId);
+    }
+
+    private LoanDTO convertEntityToDTO(Loan loan) {
+        LoanDTO dto = new LoanDTO();
+        dto.setLoanId(loan.getLoanId());
+        dto.setLoanType(loan.getLoanType());
+        dto.setPrincipalAmount(loan.getPrincipalAmount());
+        dto.setInterestRate(loan.getInterestRate());
+        dto.setTenureMonths(loan.getTenureMonths());
+        dto.setAmountPaid(loan.getAmountPaid());
+        dto.setStatus(loan.getStatus());
+        return dto;
+    }
+
+    private Loan convertCreateRequestDTOtoEntity(LoanCreateRequestDTO createRequestDTO) {
+        Loan loan = new Loan();
+        loan.setLoanType(createRequestDTO.getLoanType());
+        loan.setPrincipalAmount(createRequestDTO.getPrincipalAmount());
+        loan.setInterestRate(createRequestDTO.getInterestRate());
+        loan.setTenureMonths(createRequestDTO.getTenureMonths());
+        return loan;
     }
 }

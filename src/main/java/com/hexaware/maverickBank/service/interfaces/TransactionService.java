@@ -1,9 +1,9 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.Transaction;
+import com.hexaware.maverickBank.dto.TransactionDTO;
 
 public interface TransactionService {
-    Transaction createTransaction(Transaction transaction);
-    Transaction getTransactionById(Long transactionId);
+    TransactionDTO createTransaction(TransactionDTO transactionDTO);
+    TransactionDTO getTransactionById(Long transactionId);
     void deleteTransaction(Long transactionId);
 }

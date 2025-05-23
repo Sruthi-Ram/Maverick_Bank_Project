@@ -1,13 +1,16 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.BankEmployee;
 import java.util.List;
 
+import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
+import com.hexaware.maverickBank.dto.BankEmployeeDTO;
+import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
+
 public interface BankEmployeeService {
-    BankEmployee createBankEmployee(BankEmployee bankEmployee);
-    BankEmployee getBankEmployeeById(Long employeeId);
-    List<BankEmployee> getAllBankEmployees();
-    BankEmployee updateBankEmployee(Long employeeId, BankEmployee bankEmployee);
+    BankEmployeeDTO createBankEmployee(BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO);
+    BankEmployeeDTO getBankEmployeeById(Long employeeId);
+    List<BankEmployeeDTO> getAllBankEmployees();
+    BankEmployeeDTO updateBankEmployee(Long employeeId, BankEmployeeUpdateRequestDTO bankEmployeeUpdateRequestDTO);
     void deleteBankEmployee(Long employeeId);
-    BankEmployee getBankEmployeeByUserId(Long userId);
+    BankEmployeeDTO getBankEmployeeByUserId(Long userId);
 }

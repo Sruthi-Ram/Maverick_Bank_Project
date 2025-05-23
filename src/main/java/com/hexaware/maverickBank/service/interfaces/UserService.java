@@ -1,12 +1,14 @@
 package com.hexaware.maverickBank.service.interfaces;
 
-import com.hexaware.maverickBank.entity.User;
+import com.hexaware.maverickBank.dto.UserDTO;
+import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
+import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
 
 public interface UserService {
-    User registerUser(User user);
-    User loginUser(String identifier, String password);
-    User getUserById(Long userId);
-    User updateUser(Long userId, String password, String email, String role, String status);
-    void deactivateUser(Long userId);
+    UserDTO registerUser(UserRegistrationRequestDTO registrationRequestDTO); // Use DTO for registration request
+    UserDTO loginUser(String identifier, String password);
+    UserDTO getUserById(Long userId); // Return DTO
+    UserDTO updateUser(Long userId, UserUpdateRequestDTO updateRequestDTO); // Use DTO for update request
+   // void deactivateUser(Long userId);
     void deleteUser(Long userId);
 }

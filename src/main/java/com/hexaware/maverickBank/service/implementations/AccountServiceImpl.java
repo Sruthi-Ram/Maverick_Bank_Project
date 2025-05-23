@@ -5,12 +5,18 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hexaware.maverickBank.dto.AccountCreateRequestDTO;
+import com.hexaware.maverickBank.dto.AccountDTO;
+import com.hexaware.maverickBank.dto.AccountUpdateRequestDTO;
 import com.hexaware.maverickBank.entity.Account;
+import com.hexaware.maverickBank.entity.BankBranch;
+import com.hexaware.maverickBank.entity.Customer;
 import com.hexaware.maverickBank.entity.Transaction;
 import com.hexaware.maverickBank.exception.InsufficientBalanceException;
 import com.hexaware.maverickBank.exception.InvalidTransferAmountException;
@@ -37,17 +43,17 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private IBankBranchRepository bankBranchRepository;
 
-    private void validateAccount(Account account) {
-        if (account.getCustomer() == null || account.getCustomer().getCustomerId() == null || customerRepository.findById(account.getCustomer().getCustomerId()).isEmpty()) {
+    private void validateAccount(AccountDTO accountDTO) {
+        if (accountDTO.getCustomerId() == null || customerRepository.findById(accountDTO.getCustomerId()).isEmpty()) {
             throw new ValidationException("Customer ID is required and must exist");
         }
-        if (account.getBranch() == null || account.getBranch().getBranchId() == null || bankBranchRepository.findById(account.getBranch().getBranchId()).isEmpty()) {
+        if (accountDTO.getBranchId() == null || bankBranchRepository.findById(accountDTO.getBranchId()).isEmpty()) {
             throw new ValidationException("Branch ID is required and must exist");
         }
-        if (account.getAccountType() == null || account.getAccountType().isEmpty()) {
+        if (accountDTO.getAccountType() == null || accountDTO.getAccountType().isEmpty()) {
             throw new ValidationException("Account type cannot be empty");
         }
-        if (account.getBalance() == null || account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+        if (accountDTO.getBalance() == null || accountDTO.getBalance().compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException("Initial balance must be zero or positive");
         }
     }
@@ -58,33 +64,46 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account createAccount(Account account) {
-        validateAccount(account);
+    public AccountDTO createAccount(AccountCreateRequestDTO accountCreateRequestDTO) {
+        validateAccount(convertCreateRequestDTOtoDTO(accountCreateRequestDTO));
+        Account account = convertCreateRequestDTOtoEntity(accountCreateRequestDTO);
         account.setDateOpened(LocalDateTime.now());
         account.setAccountNumber(generateAccountNumber());
         // You might want to set IFSC code based on the branch
-        return accountRepository.save(account);
+        Account savedAccount = accountRepository.save(account);
+        return convertEntityToDTO(savedAccount);
     }
 
     @Override
-    public Account getAccountById(Long accountId) {
-        return accountRepository.findById(accountId)
+    public AccountDTO getAccountById(Long accountId) {
+        Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new NoSuchElementException("Account not found with ID: " + accountId));
+        return convertEntityToDTO(account);
     }
 
     @Override
-    public List<Account> getAllAccounts() {
-        return accountRepository.findAll();
+    public List<AccountDTO> getAllAccounts() {
+        return accountRepository.findAll().stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Account updateAccount(Long accountId, Account account) {
+    public AccountDTO updateAccount(Long accountId, AccountUpdateRequestDTO accountUpdateRequestDTO) {
         Account existingAccount = accountRepository.findById(accountId)
                 .orElseThrow(() -> new NoSuchElementException("Account not found with ID: " + accountId));
-        account.setAccountId(accountId);
-        account.setDateOpened(existingAccount.getDateOpened()); // Keep the original opening date
-        validateAccount(account);
-        return accountRepository.save(account);
+        if (accountUpdateRequestDTO.getAccountType() != null) {
+            existingAccount.setAccountType(accountUpdateRequestDTO.getAccountType());
+        }
+        if (accountUpdateRequestDTO.getBalance() != null) {
+            existingAccount.setBalance(accountUpdateRequestDTO.getBalance());
+        }
+        if (accountUpdateRequestDTO.getIfscCode() != null) {
+            existingAccount.setIfscCode(accountUpdateRequestDTO.getIfscCode());
+        }
+        existingAccount.setDateOpened(existingAccount.getDateOpened()); // Keep the original opening date
+        Account updatedAccount = accountRepository.save(existingAccount);
+        return convertEntityToDTO(updatedAccount);
     }
 
     @Override
@@ -97,32 +116,30 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<Account> getAccountsByCustomerId(Long customerId) {
+    public List<AccountDTO> getAccountsByCustomerId(Long customerId) {
         getCustomerByIdForAccount(customerId); // Ensure customer exists
         List<Account> accounts = accountRepository.findByCustomer_CustomerId(customerId);
         if (accounts.isEmpty()) {
             throw new NoSuchElementException("No accounts found for Customer ID: " + customerId);
         }
-        return accounts;
+        return accounts.stream()
+                .map(this::convertEntityToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Account getAccountByAccountNumber(String accountNumber) {
+    public AccountDTO getAccountByAccountNumber(String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber);
         if (account == null) {
             throw new NoSuchElementException("Account not found with account number: " + accountNumber);
         }
-        return account;
+        return convertEntityToDTO(account);
     }
 
     @Override
     public List<Transaction> getTransactionsForAccount(Long accountId) {
         getAccountById(accountId); // Throws exception if account not found
-        List<Transaction> transactions = transactionRepository.findByAccount_AccountIdOrderByTransactionDateDesc(accountId);
-        if (transactions.isEmpty()) {
-            throw new NoSuchElementException("No transactions found for Account ID: " + accountId);
-        }
-        return transactions;
+        return transactionRepository.findByAccount_AccountIdOrderByTransactionDateDesc(accountId);
     }
 
     @Override
@@ -206,5 +223,46 @@ public class AccountServiceImpl implements AccountService {
     private void getCustomerByIdForAccount(Long customerId) {
         customerRepository.findById(customerId)
                 .orElseThrow(() -> new NoSuchElementException("Customer not found with ID: " + customerId));
+    }
+
+    private AccountDTO convertEntityToDTO(Account account) {
+        AccountDTO dto = new AccountDTO();
+        dto.setAccountId(account.getAccountId());
+        if (account.getCustomer() != null) {
+            dto.setCustomerId(account.getCustomer().getCustomerId());
+        }
+        if (account.getBranch() != null) {
+            dto.setBranchId(account.getBranch().getBranchId());
+        }
+        dto.setAccountNumber(account.getAccountNumber());
+        dto.setAccountType(account.getAccountType());
+        dto.setBalance(account.getBalance());
+        dto.setDateOpened(account.getDateOpened());
+        dto.setIfscCode(account.getIfscCode());
+        return dto;
+    }
+
+    private Account convertCreateRequestDTOtoEntity(AccountCreateRequestDTO createRequestDTO) {
+        Account account = new Account();
+        Customer customer = new Customer();
+        customer.setCustomerId(createRequestDTO.getCustomerId());
+        account.setCustomer(customer);
+        BankBranch branch = new BankBranch();
+        branch.setBranchId(createRequestDTO.getBranchId());
+        account.setBranch(branch);
+        account.setAccountType(createRequestDTO.getAccountType());
+        account.setBalance(createRequestDTO.getBalance());
+        account.setIfscCode(createRequestDTO.getIfscCode());
+        return account;
+    }
+
+    private AccountDTO convertCreateRequestDTOtoDTO(AccountCreateRequestDTO createRequestDTO) {
+        AccountDTO dto = new AccountDTO();
+        dto.setCustomerId(createRequestDTO.getCustomerId());
+        dto.setBranchId(createRequestDTO.getBranchId());
+        dto.setAccountType(createRequestDTO.getAccountType());
+        dto.setBalance(createRequestDTO.getBalance());
+        dto.setIfscCode(createRequestDTO.getIfscCode());
+        return dto;
     }
 }
