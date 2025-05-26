@@ -19,7 +19,9 @@ import com.hexaware.maverickBank.repository.IUserRepository;
 import com.hexaware.maverickBank.service.interfaces.UserService;
 
 import jakarta.validation.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -43,16 +45,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO registerUser(UserRegistrationRequestDTO registrationRequestDTO) {
+        log.info("Registering user with username: {}", registrationRequestDTO.getUsername());
         if (userRepository.findByUsername(registrationRequestDTO.getUsername()) != null) {
+            log.warn("Username already exists: {}", registrationRequestDTO.getUsername());
             throw new ValidationException("Username already exists");
         }
         if (userRepository.findByEmail(registrationRequestDTO.getEmail()) != null) {
+            log.warn("Email already exists: {}", registrationRequestDTO.getEmail());
             throw new ValidationException("Email already exists");
         }
         if (!isValidPassword(registrationRequestDTO.getPassword())) {
+            log.warn("Invalid password format for user: {}", registrationRequestDTO.getUsername());
             throw new ValidationException("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit");
         }
         if (!isValidEmail(registrationRequestDTO.getEmail())) {
+            log.warn("Invalid email format: {}", registrationRequestDTO.getEmail());
             throw new ValidationException("Invalid email format");
         }
 
@@ -60,37 +67,53 @@ public class UserServiceImpl implements UserService {
         user.setUsername(registrationRequestDTO.getUsername());
         user.setPassword(registrationRequestDTO.getPassword());
         user.setEmail(registrationRequestDTO.getEmail());
-        // Assuming default role for registration, you might need to fetch this based on logic
-        Role defaultRole = roleRepository.findByName("CUSTOMER"); // Example: set default role to CUSTOMER
+        Role defaultRole = roleRepository.findByName("CUSTOMER");
         user.setRole(defaultRole);
 
         User savedUser = userRepository.save(user);
-        return convertUserToDTO(savedUser);
+        UserDTO userDTO = convertUserToDTO(savedUser);
+        log.info("User registered successfully with ID: {}", userDTO.getUserId());
+        return userDTO;
     }
 
     @Override
     public UserDTO loginUser(String identifier, String password) {
+        log.info("Logging in user with identifier: {}", identifier);
         User user = userRepository.findByUsernameOrEmail(identifier);
         if (user == null || !user.getPassword().equals(password)) {
+            log.warn("Invalid credentials for identifier: {}", identifier);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
-        return convertUserToDTO(user);
+        UserDTO userDTO = convertUserToDTO(user);
+        log.info("User logged in successfully with ID: {}", userDTO.getUserId());
+        return userDTO;
     }
 
     @Override
     public UserDTO getUserById(Long userId) {
+        log.info("Fetching user by ID: {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
-        return convertUserToDTO(user);
+                .orElseThrow(() -> {
+                    log.warn("User not found with ID: {}", userId);
+                    return new NoSuchElementException("User not found with ID: " + userId);
+                });
+        UserDTO userDTO = convertUserToDTO(user);
+        log.info("User found with ID: {}", userDTO.getUserId());
+        return userDTO;
     }
 
     @Override
     public UserDTO updateUser(Long userId, UserUpdateRequestDTO updateRequestDTO) {
+        log.info("Updating user with ID: {}", userId);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
+                .orElseThrow(() -> {
+                    log.warn("User not found with ID: {}", userId);
+                    return new NoSuchElementException("User not found with ID: " + userId);
+                });
         boolean updated = false;
         if (updateRequestDTO.getPassword() != null && !updateRequestDTO.getPassword().isEmpty()) {
             if (!isValidPassword(updateRequestDTO.getPassword())) {
+                log.warn("Invalid new password format for user ID: {}", userId);
                 throw new ValidationException("New password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit");
             }
             user.setPassword(updateRequestDTO.getPassword());
@@ -98,9 +121,11 @@ public class UserServiceImpl implements UserService {
         }
         if (updateRequestDTO.getEmail() != null && !updateRequestDTO.getEmail().isEmpty() && !updateRequestDTO.getEmail().equals(user.getEmail())) {
             if (!isValidEmail(updateRequestDTO.getEmail())) {
+                log.warn("Invalid new email format for user ID: {}", userId);
                 throw new ValidationException("Invalid email format");
             }
             if (userRepository.findByEmail(updateRequestDTO.getEmail()) != null) {
+                log.warn("Email already exists: {}", updateRequestDTO.getEmail());
                 throw new ValidationException("Email already exists");
             }
             user.setEmail(updateRequestDTO.getEmail());
@@ -108,21 +133,27 @@ public class UserServiceImpl implements UserService {
         }
         if (updateRequestDTO.getRoleId() != null) {
             Role role = roleRepository.findById(updateRequestDTO.getRoleId())
-                    .orElseThrow(() -> new NoSuchElementException("Role not found with ID: " + updateRequestDTO.getRoleId()));
+                    .orElseThrow(() -> {
+                        log.warn("Role not found with ID: {}", updateRequestDTO.getRoleId());
+                        return new NoSuchElementException("Role not found with ID: " + updateRequestDTO.getRoleId());
+                    });
             user.setRole(role);
             updated = true;
         }
-        return updated ? convertUserToDTO(userRepository.save(user)) : convertUserToDTO(user);
+        UserDTO userDTO = updated ? convertUserToDTO(userRepository.save(user)) : convertUserToDTO(user);
+        log.info("User with ID {} updated successfully. Updated: {}", userId, updated);
+        return userDTO;
     }
-
-    
 
     @Override
     public void deleteUser(Long userId) {
+        log.info("Deleting user with ID: {}", userId);
         if (!userRepository.existsById(userId)) {
+            log.warn("User not found with ID: {}", userId);
             throw new NoSuchElementException("User not found with ID: " + userId);
         }
         userRepository.deleteById(userId);
+        log.info("User with ID {} deleted successfully.", userId);
     }
 
     private UserDTO convertUserToDTO(User user) {
