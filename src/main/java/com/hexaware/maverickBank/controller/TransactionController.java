@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +29,14 @@ public class TransactionController {
 
     @PostMapping("/createTransaction")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<TransactionDTO> createTransaction(@Valid @RequestBody TransactionDTO transactionDTO) {
         TransactionDTO createdTransaction = transactionService.createTransaction(transactionDTO);
         return new ResponseEntity<>(createdTransaction, HttpStatus.CREATED);
     }
 
     @GetMapping("/getTransactionById/{transactionId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<TransactionDTO> getTransactionById(@PathVariable Long transactionId) {
         try {
             TransactionDTO transactionDTO = transactionService.getTransactionById(transactionId);
@@ -45,6 +48,7 @@ public class TransactionController {
 
     @DeleteMapping("/deleteTransaction/{transactionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long transactionId) {
         try {
             transactionService.deleteTransaction(transactionId);

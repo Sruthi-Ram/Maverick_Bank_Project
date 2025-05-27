@@ -18,6 +18,7 @@ import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
 import com.hexaware.maverickBank.entity.BankEmployee;
 import com.hexaware.maverickBank.entity.User;
 import com.hexaware.maverickBank.repository.IBankEmployeeRepository;
+import com.hexaware.maverickBank.repository.IRoleRepository;
 import com.hexaware.maverickBank.repository.IUserRepository;
 import com.hexaware.maverickBank.service.interfaces.AdminService;
 
@@ -35,6 +36,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private PasswordEncoder passwordEncoder; // To encode the password
+    
+    @Autowired
+    private IRoleRepository roleRepository;
 
     // User Management
 
@@ -87,7 +91,20 @@ public class AdminServiceImpl implements AdminService {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            BeanUtils.copyProperties(userUpdateRequestDTO, user);
+            user.setEmail(userUpdateRequestDTO.getEmail());
+            if (userUpdateRequestDTO.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(userUpdateRequestDTO.getPassword()));
+            }
+            if (userUpdateRequestDTO.getRoleId() != null) {
+                Optional<com.hexaware.maverickBank.entity.Role> roleOptional = roleRepository.findById(userUpdateRequestDTO.getRoleId());
+                if (roleOptional.isPresent()) {
+                    user.setRole(roleOptional.get());
+                } else {
+                    log.warn("Role not found with ID: {}", userUpdateRequestDTO.getRoleId());
+                    // Consider throwing an exception here if role not found
+                    return null;
+                }
+            }
             user.setUserId(userId); // Ensure the ID is not overwritten
             User updatedUser = userRepository.save(user);
             UserDTO userDTO = new UserDTO();

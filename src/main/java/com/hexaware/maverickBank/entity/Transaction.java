@@ -38,6 +38,9 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "beneficiary_id")
     private Beneficiary beneficiary;
+    
+    public Transaction() {
+    }
 
     public Long getTransactionId() {
         return transactionId;

@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +34,7 @@ public class AccountClosureRequestController {
 
     @PostMapping("/createaccountclosurerequest")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<AccountClosureRequestDTO> createAccountClosureRequest(@Valid @RequestBody AccountClosureRequestCreateRequestDTO requestDTO) {
         log.info("Received request to create account closure request: {}", requestDTO);
         AccountClosureRequestDTO createdRequest = accountClosureRequestService.createAccountClosureRequest(requestDTO);
@@ -41,6 +43,7 @@ public class AccountClosureRequestController {
     }
 
     @GetMapping("/getaccountclosurerequestbyid/{closureRequestId}")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<AccountClosureRequestDTO> getAccountClosureRequestById(@PathVariable Long closureRequestId) {
         log.info("Received request to get account closure request by ID: {}", closureRequestId);
         try {
@@ -54,6 +57,7 @@ public class AccountClosureRequestController {
     }
 
     @GetMapping("/getallaccountclosurerequests")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<List<AccountClosureRequestDTO>> getAllAccountClosureRequests() {
         log.info("Received request to get all account closure requests.");
         List<AccountClosureRequestDTO> requestDTOList = accountClosureRequestService.getAllAccountClosureRequests();
@@ -62,6 +66,7 @@ public class AccountClosureRequestController {
     }
 
     @PutMapping("/updateaccountclosurerequest/{closureRequestId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<AccountClosureRequestDTO> updateAccountClosureRequest(@PathVariable Long closureRequestId, @Valid @RequestBody AccountClosureRequestDTO requestDTO) {
         log.info("Received request to update account closure request with ID: {} and data: {}", closureRequestId, requestDTO);
         try {
@@ -76,6 +81,7 @@ public class AccountClosureRequestController {
 
     @DeleteMapping("/deleteaccountclosurerequest/{closureRequestId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<Void> deleteAccountClosureRequest(@PathVariable Long closureRequestId) {
         log.info("Received request to delete account closure request with ID: {}", closureRequestId);
         try {
@@ -89,6 +95,7 @@ public class AccountClosureRequestController {
     }
 
     @GetMapping("/getAccountClosureRequestsByCustomerId/{customerId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<List<AccountClosureRequestDTO>> getAccountClosureRequestsByCustomerId(@PathVariable Long customerId) {
         log.info("Received request to get account closure requests by Customer ID: {}", customerId);
         try {
@@ -102,6 +109,7 @@ public class AccountClosureRequestController {
     }
 
     @GetMapping("/getAccountClosureRequestByAccountId/{accountId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<AccountClosureRequestDTO> getAccountClosureRequestByAccountId(@PathVariable Long accountId) {
         log.info("Received request to get account closure request by Account ID: {}", accountId);
         try {

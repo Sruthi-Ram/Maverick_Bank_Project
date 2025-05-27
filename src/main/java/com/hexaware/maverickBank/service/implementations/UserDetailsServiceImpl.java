@@ -12,25 +12,36 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.IUserRepository; // Use your actual repository name
+import com.hexaware.maverickBank.repository.IUserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private IUserRepository userRepository; // Use your actual repository name
+    private IUserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        log.info("loadUserByUsername called for username: {}", username);
+        User user = userRepository.findByUsernameOrEmail(username);
 
         if (user == null) {
+            log.warn("User not found with username/email: {}", username);
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
 
+        log.info("User found: Username={}, Email={}, Password={}, Role={}",
+                user.getUsername(), user.getEmail(), user.getPassword(), user.getRole());
+
         List<GrantedAuthority> authorities = new ArrayList<>();
         if (user.getRole() != null) {
-        	authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().toUpperCase()));
+            log.info("Adding authority: ROLE_{}", user.getRole().getName().toUpperCase());
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().toUpperCase()));
+        } else {
+            log.warn("User role is null for user: {}", username);
         }
 
         return new org.springframework.security.core.userdetails.User(

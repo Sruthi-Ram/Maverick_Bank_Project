@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,12 +33,14 @@ public class BeneficiaryController {
 
     @PostMapping("/createBeneficiary")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<BeneficiaryDTO> createBeneficiary(@Valid @RequestBody BeneficiaryCreateRequestDTO beneficiaryCreateRequestDTO) {
         BeneficiaryDTO createdBeneficiary = beneficiaryService.createBeneficiary(beneficiaryCreateRequestDTO);
         return new ResponseEntity<>(createdBeneficiary, HttpStatus.CREATED);
     }
 
     @GetMapping("/getBeneficiaryById/{beneficiaryId}")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<BeneficiaryDTO> getBeneficiaryById(@PathVariable Long beneficiaryId) {
         try {
             BeneficiaryDTO beneficiaryDTO = beneficiaryService.getBeneficiaryById(beneficiaryId);
@@ -48,12 +51,14 @@ public class BeneficiaryController {
     }
 
     @GetMapping("/getAllBeneficiaries")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<List<BeneficiaryDTO>> getAllBeneficiaries() {
         List<BeneficiaryDTO> beneficiaryDTOList = beneficiaryService.getAllBeneficiaries();
         return new ResponseEntity<>(beneficiaryDTOList, HttpStatus.OK);
     }
 
     @PutMapping("/updateBeneficiary/{beneficiaryId}")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<BeneficiaryDTO> updateBeneficiary(@PathVariable Long beneficiaryId, @Valid @RequestBody BeneficiaryUpdateRequestDTO beneficiaryUpdateRequestDTO) {
         try {
             BeneficiaryDTO updatedBeneficiary = beneficiaryService.updateBeneficiary(beneficiaryId, beneficiaryUpdateRequestDTO);
@@ -65,6 +70,7 @@ public class BeneficiaryController {
 
     @DeleteMapping("/deleteBeneficiary/{beneficiaryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Void> deleteBeneficiary(@PathVariable Long beneficiaryId) {
         try {
             beneficiaryService.deleteBeneficiary(beneficiaryId);
@@ -75,6 +81,7 @@ public class BeneficiaryController {
     }
 
     @GetMapping("/getBeneficiariesByCustomerId/{customerId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<List<BeneficiaryDTO>> getBeneficiariesByCustomerId(@PathVariable Long customerId) {
         try {
             List<BeneficiaryDTO> beneficiaryDTOList = beneficiaryService.getBeneficiariesByCustomerId(customerId);

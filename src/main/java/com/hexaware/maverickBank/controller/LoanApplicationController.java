@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,12 +33,14 @@ public class LoanApplicationController {
 
     @PostMapping("/createLoanApplication")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<LoanApplicationDTO> createLoanApplication(@Valid @RequestBody LoanApplicationCreateRequestDTO loanApplicationCreateRequestDTO) {
         LoanApplicationDTO createdLoanApplication = loanApplicationService.createLoanApplication(loanApplicationCreateRequestDTO);
         return new ResponseEntity<>(createdLoanApplication, HttpStatus.CREATED);
     }
 
     @GetMapping("/getLoanApplicationById/{applicationId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<LoanApplicationDTO> getLoanApplicationById(@PathVariable Long applicationId) {
         try {
             LoanApplicationDTO loanApplicationDTO = loanApplicationService.getLoanApplicationById(applicationId);
@@ -48,12 +51,14 @@ public class LoanApplicationController {
     }
 
     @GetMapping("/getAllLoanApplications")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<List<LoanApplicationDTO>> getAllLoanApplications() {
         List<LoanApplicationDTO> loanApplicationDTOList = loanApplicationService.getAllLoanApplications();
         return new ResponseEntity<>(loanApplicationDTOList, HttpStatus.OK);
     }
 
     @PutMapping("/updateLoanApplication/{applicationId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<LoanApplicationDTO> updateLoanApplication(@PathVariable Long applicationId, @Valid @RequestBody LoanApplicationUpdateRequestDTO loanApplicationUpdateRequestDTO) {
         try {
             LoanApplicationDTO updatedLoanApplication = loanApplicationService.updateLoanApplication(applicationId, loanApplicationUpdateRequestDTO);
@@ -65,6 +70,7 @@ public class LoanApplicationController {
 
     @DeleteMapping("/deleteLoanApplication/{applicationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<Void> deleteLoanApplication(@PathVariable Long applicationId) {
         try {
             loanApplicationService.deleteLoanApplication(applicationId);
@@ -75,6 +81,7 @@ public class LoanApplicationController {
     }
 
     @GetMapping("/getLoanApplicationsByCustomerId/{customerId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<List<LoanApplicationDTO>> getLoanApplicationsByCustomerId(@PathVariable Long customerId) {
         try {
             List<LoanApplicationDTO> loanApplicationDTOList = loanApplicationService.getLoanApplicationsByCustomerId(customerId);

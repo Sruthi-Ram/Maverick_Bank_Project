@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,12 +40,14 @@ public class AccountController {
 
     @PostMapping("/createaccount")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountCreateRequestDTO accountCreateRequestDTO) {
         AccountDTO createdAccount = accountService.createAccount(accountCreateRequestDTO);
         return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
     @GetMapping("/getAccountById/{accountId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<AccountDTO> getAccountById(@PathVariable Long accountId) {
         try {
             AccountDTO accountDTO = accountService.getAccountById(accountId);
@@ -55,12 +58,14 @@ public class AccountController {
     }
 
     @GetMapping("/getallaccounts")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         List<AccountDTO> accountDTOList = accountService.getAllAccounts();
         return new ResponseEntity<>(accountDTOList, HttpStatus.OK);
     }
 
     @PutMapping("/updateaccount/{accountId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long accountId, @Valid @RequestBody AccountUpdateRequestDTO accountUpdateRequestDTO) {
         try {
             AccountDTO updatedAccount = accountService.updateAccount(accountId, accountUpdateRequestDTO);
@@ -72,6 +77,7 @@ public class AccountController {
 
     @DeleteMapping("/deleteaccount/{accountId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<Void> deleteAccount(@PathVariable Long accountId) {
         try {
             accountService.deleteAccount(accountId);
@@ -82,6 +88,7 @@ public class AccountController {
     }
 
     @GetMapping("/customer/{customerId}")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<AccountDTO>> getAccountsByCustomerId(@PathVariable Long customerId) {
         try {
             List<AccountDTO> accountDTOList = accountService.getAccountsByCustomerId(customerId);
@@ -92,6 +99,7 @@ public class AccountController {
     }
 
     @GetMapping("/number/{accountNumber}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<AccountDTO> getAccountByAccountNumber(@PathVariable String accountNumber) {
         try {
             AccountDTO accountDTO = accountService.getAccountByAccountNumber(accountNumber);
@@ -102,6 +110,7 @@ public class AccountController {
     }
 
     @GetMapping("/gettransactionsforaccount/{accountId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<List<Transaction>> getTransactionsForAccount(@PathVariable Long accountId) {
         try {
             List<Transaction> transactions = accountService.getTransactionsForAccount(accountId);
@@ -112,9 +121,10 @@ public class AccountController {
     }
 
     @GetMapping("/gettransactionsforaccountbydaterange/{accountId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<List<Transaction>> getTransactionsForAccountByDateRange(@PathVariable Long accountId,
-                                                                              @RequestParam LocalDateTime startDate,
-                                                                              @RequestParam LocalDateTime endDate) {
+                                                                                      @RequestParam LocalDateTime startDate,
+                                                                                      @RequestParam LocalDateTime endDate) {
         try {
             List<Transaction> transactions = accountService.getTransactionsForAccountByDateRange(accountId, startDate, endDate);
             return new ResponseEntity<>(transactions, HttpStatus.OK);
@@ -124,6 +134,7 @@ public class AccountController {
     }
 
     @PostMapping("/deposit/{accountId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<Void> deposit(@PathVariable Long accountId, @RequestParam BigDecimal amount) {
         try {
             AccountDTO accountDTO = accountService.getAccountById(accountId);
@@ -136,6 +147,7 @@ public class AccountController {
     }
 
     @PostMapping("/withdraw/{accountId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<Void> withdraw(@PathVariable Long accountId, @RequestParam BigDecimal amount) {
         try {
             AccountDTO accountDTO = accountService.getAccountById(accountId);
@@ -148,6 +160,7 @@ public class AccountController {
     }
 
     @PostMapping("/transfer")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")
     public ResponseEntity<Void> transfer(@RequestParam String fromAccountNumber, @RequestParam String toAccountNumber, @RequestParam BigDecimal amount) {
         try {
             AccountDTO fromAccountDTO = accountService.getAccountByAccountNumber(fromAccountNumber);

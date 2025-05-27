@@ -6,9 +6,16 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.hexaware.maverickBank.dto.AuthRequest;
+import com.hexaware.maverickBank.dto.AuthResponse;
 import com.hexaware.maverickBank.dto.UserDTO;
 import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
@@ -17,6 +24,7 @@ import com.hexaware.maverickBank.entity.User;
 import com.hexaware.maverickBank.repository.IRoleRepository;
 import com.hexaware.maverickBank.repository.IUserRepository;
 import com.hexaware.maverickBank.service.interfaces.UserService;
+import com.hexaware.maverickBank.service.security.JwtService;
 
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +38,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private IRoleRepository roleRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtService jwtService;
 
     private boolean isValidPassword(String password) {
         Pattern pattern = Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$");
@@ -65,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         user.setUsername(registrationRequestDTO.getUsername());
-        user.setPassword(registrationRequestDTO.getPassword());
+        user.setPassword(passwordEncoder.encode(registrationRequestDTO.getPassword())); // Encode password here
         user.setEmail(registrationRequestDTO.getEmail());
         Role defaultRole = roleRepository.findByName("CUSTOMER");
         user.setRole(defaultRole);
@@ -77,16 +94,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO loginUser(String identifier, String password) {
-        log.info("Logging in user with identifier: {}", identifier);
-        User user = userRepository.findByUsernameOrEmail(identifier);
-        if (user == null || !user.getPassword().equals(password)) {
-            log.warn("Invalid credentials for identifier: {}", identifier);
+    public AuthResponse loginUser(AuthRequest authRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authRequest.getUsername(),
+                        authRequest.getPassword()
+                )
+        );
+
+        if (authentication.isAuthenticated()) {
+            User user = userRepository.findByUsernameOrEmail(authRequest.getUsername());
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found");
+            }
+            try {
+                String jwtToken = jwtService.generateToken(new org.springframework.security.core.userdetails.User(
+                        user.getUsername(),
+                        user.getPassword(),
+                        authentication.getAuthorities()
+                ));
+                log.info("Generated JWT Token: {}", jwtToken); // This should hopefully be logged if successful
+                return new AuthResponse(jwtToken);
+            } catch (Exception e) {
+                log.error("Error generating JWT token: {}", e.getMessage(), e);
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating token");
+            }
+        } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
-        UserDTO userDTO = convertUserToDTO(user);
-        log.info("User logged in successfully with ID: {}", userDTO.getUserId());
-        return userDTO;
     }
 
     @Override
@@ -116,7 +151,7 @@ public class UserServiceImpl implements UserService {
                 log.warn("Invalid new password format for user ID: {}", userId);
                 throw new ValidationException("New password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit");
             }
-            user.setPassword(updateRequestDTO.getPassword());
+            user.setPassword(passwordEncoder.encode(updateRequestDTO.getPassword()));
             updated = true;
         }
         if (updateRequestDTO.getEmail() != null && !updateRequestDTO.getEmail().isEmpty() && !updateRequestDTO.getEmail().equals(user.getEmail())) {
