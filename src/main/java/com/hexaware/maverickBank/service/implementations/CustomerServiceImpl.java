@@ -47,7 +47,6 @@ public class CustomerServiceImpl implements CustomerServcie {
         if (customer.getContactNumber() == null || customer.getContactNumber().isEmpty()) {
             throw new ValidationException("Contact number cannot be empty");
         }
-        // Add more validation rules as needed for gender, aadhar, pan, etc.
     }
 
     @Override
@@ -110,7 +109,6 @@ public class CustomerServiceImpl implements CustomerServcie {
         if (!customerRepository.existsById(customerId)) {
             throw new NoSuchElementException("Customer not found with ID: " + customerId);
         }
-        // Consider adding logic to prevent deleting customers with active accounts or loans
         customerRepository.deleteById(customerId);
     }
 

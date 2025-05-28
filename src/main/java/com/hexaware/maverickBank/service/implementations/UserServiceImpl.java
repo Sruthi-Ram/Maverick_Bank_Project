@@ -5,18 +5,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import com.hexaware.maverickBank.dto.AuthRequest;
-import com.hexaware.maverickBank.dto.AuthResponse;
 import com.hexaware.maverickBank.dto.UserDTO;
+import com.hexaware.maverickBank.dto.UserLoginRequestDTO;
 import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
 import com.hexaware.maverickBank.entity.Role;
@@ -26,9 +23,10 @@ import com.hexaware.maverickBank.repository.IUserRepository;
 import com.hexaware.maverickBank.service.interfaces.UserService;
 import com.hexaware.maverickBank.service.security.JwtService;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-
+@Transactional
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,64 +61,70 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO registerUser(UserRegistrationRequestDTO registrationRequestDTO) {
         log.info("Registering user with username: {}", registrationRequestDTO.getUsername());
+
         if (userRepository.findByUsername(registrationRequestDTO.getUsername()) != null) {
             log.warn("Username already exists: {}", registrationRequestDTO.getUsername());
             throw new ValidationException("Username already exists");
         }
-        if (userRepository.findByEmail(registrationRequestDTO.getEmail()) != null) {
-            log.warn("Email already exists: {}", registrationRequestDTO.getEmail());
-            throw new ValidationException("Email already exists");
-        }
-        if (!isValidPassword(registrationRequestDTO.getPassword())) {
-            log.warn("Invalid password format for user: {}", registrationRequestDTO.getUsername());
-            throw new ValidationException("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit");
-        }
+
         if (!isValidEmail(registrationRequestDTO.getEmail())) {
             log.warn("Invalid email format: {}", registrationRequestDTO.getEmail());
             throw new ValidationException("Invalid email format");
         }
 
+        if (userRepository.findByEmail(registrationRequestDTO.getEmail()) != null) {
+            log.warn("Email already exists: {}", registrationRequestDTO.getEmail());
+            throw new ValidationException("Email already exists");
+        }
+
+        if (!isValidPassword(registrationRequestDTO.getPassword())) {
+            log.warn("Invalid password format for username: {}", registrationRequestDTO.getUsername());
+            throw new ValidationException("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one digit");
+        }
+
         User user = new User();
         user.setUsername(registrationRequestDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(registrationRequestDTO.getPassword())); // Encode password here
+        user.setPassword(passwordEncoder.encode(registrationRequestDTO.getPassword()));
         user.setEmail(registrationRequestDTO.getEmail());
-        Role defaultRole = roleRepository.findByName("CUSTOMER");
-        user.setRole(defaultRole);
+
+        // Fetch role safely
+        Role role = null;
+        if (registrationRequestDTO.getRoleId() != null) {
+            role = roleRepository.findById(registrationRequestDTO.getRoleId())
+                    .orElseGet(() -> roleRepository.findByName("CUSTOMER"));
+        }
+        if (role == null) {
+            role = roleRepository.findByName("CUSTOMER");
+        }
+        user.setRole(role);
 
         User savedUser = userRepository.save(user);
+        userRepository.flush(); // Forces immediate DB sync, useful for debugging
+
         UserDTO userDTO = convertUserToDTO(savedUser);
         log.info("User registered successfully with ID: {}", userDTO.getUserId());
         return userDTO;
     }
 
     @Override
-    public AuthResponse loginUser(AuthRequest authRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getUsername(),
-                        authRequest.getPassword()
-                )
-        );
+    public String login(UserLoginRequestDTO loginRequestDTO) {
+        try {
+            // Perform authentication
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDTO.getUsername(),
+                            loginRequestDTO.getPassword()
+                    )
+            );
 
-        if (authentication.isAuthenticated()) {
-            User user = userRepository.findByUsernameOrEmail(authRequest.getUsername());
-            if (user == null) {
-                throw new UsernameNotFoundException("User not found");
-            }
-            try {
-                String jwtToken = jwtService.generateToken(new org.springframework.security.core.userdetails.User(
-                        user.getUsername(),
-                        user.getPassword(),
-                        authentication.getAuthorities()
-                ));
-                log.info("Generated JWT Token: {}", jwtToken); // This should hopefully be logged if successful
-                return new AuthResponse(jwtToken);
-            } catch (Exception e) {
-                log.error("Error generating JWT token: {}", e.getMessage(), e);
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error generating token");
-            }
-        } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+            // Extract UserDetails and generate JWT token
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwtToken = jwtService.generateToken(userDetails);
+            log.info("User logged in successfully: {}", loginRequestDTO.getUsername());
+            return jwtToken;  // Return token as String
+        } catch (Exception ex) {
+            log.warn("Login failed for user: {}", loginRequestDTO.getUsername());
+            throw new ValidationException("Invalid username or password");
         }
     }
 

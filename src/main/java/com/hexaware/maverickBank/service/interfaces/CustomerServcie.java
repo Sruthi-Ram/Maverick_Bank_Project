@@ -1,9 +1,11 @@
 package com.hexaware.maverickBank.service.interfaces;
 
+import java.util.List;
+
 import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
 import com.hexaware.maverickBank.dto.CustomerDTO;
 import com.hexaware.maverickBank.dto.CustomerUpdateRequestDTO;
-import java.util.List;
+import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 
 public interface CustomerServcie {
     CustomerDTO createCustomer(CustomerCreateRequestDTO customerCreateRequestDTO);
@@ -12,4 +14,5 @@ public interface CustomerServcie {
     CustomerDTO updateCustomer(Long customerId, CustomerUpdateRequestDTO customerUpdateRequestDTO);
     void deleteCustomer(Long customerId);
     CustomerDTO getCustomerByUserId(Long userId);
+    
 }

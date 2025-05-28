@@ -22,10 +22,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
     private IUserRepository userRepository;
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("loadUserByUsername called for username: {}", username);
+
         User user = userRepository.findByUsernameOrEmail(username);
 
         if (user == null) {
@@ -33,12 +33,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
 
-        log.info("User found: Username={}, Email={}, Password={}, Role={}",
-                user.getUsername(), user.getEmail(), user.getPassword(), user.getRole());
+        log.info("User found: Username={}, Email={}, Role={}", user.getUsername(), user.getEmail(), user.getRole());
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        if (user.getRole() != null) {
-            log.info("Adding authority: ROLE_{}", user.getRole().getName().toUpperCase());
+        if (user.getRole() != null && user.getRole().getName() != null) {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().toUpperCase()));
         } else {
             log.warn("User role is null for user: {}", username);
@@ -50,4 +48,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 authorities
         );
     }
+
+
 }

@@ -32,7 +32,17 @@ public class BankEmployee {
     @ManyToOne
     @JoinColumn(name = "branch_id", nullable = false)
     private BankBranch branch;
-
+    
+    public BankEmployee() {
+    }
+    
+    public BankEmployee(User user, String name, String contactNumber, BankBranch branch) {
+        this.user = user;
+        this.name = name;
+        this.contactNumber = contactNumber;
+        this.branch = branch;
+    }
+    
     public Long getEmployeeId() {
         return employeeId;
     }

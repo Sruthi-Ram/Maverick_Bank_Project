@@ -33,7 +33,18 @@ public class BankBranch {
     private List<Account> accounts;
 
     @OneToMany(mappedBy = "branch", fetch = FetchType.LAZY)
+    
     private List<BankEmployee> employees;
+    
+    public BankBranch() {
+    }
+    
+    public BankBranch(Long branchId, String name, String address, String ifscPrefix) {
+        this.branchId = branchId;
+        this.name = name;
+        this.address = address;
+        this.ifscPrefix = ifscPrefix;
+    }
 
     public Long getBranchId() {
         return branchId;

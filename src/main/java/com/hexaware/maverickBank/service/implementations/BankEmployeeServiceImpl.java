@@ -1,8 +1,8 @@
 package com.hexaware.maverickBank.service.implementations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,11 @@ public class BankEmployeeServiceImpl implements BankEmployeeService {
         if (employee.getBranch() == null || employee.getBranch().getBranchId() == null) {
             throw new ValidationException("Branch ID is required");
         }
-        bankBranchService.getBankBranchById(employee.getBranch().getBranchId()); // Ensure branch exists
+        try {
+            bankBranchService.getBankBranchById(employee.getBranch().getBranchId());
+        } catch (NoSuchElementException e) {
+            throw new ValidationException("Branch with ID " + employee.getBranch().getBranchId() + " not found.");
+        }
     }
 
     @Override
@@ -58,22 +62,29 @@ public class BankEmployeeServiceImpl implements BankEmployeeService {
 
     @Override
     public BankEmployeeDTO getBankEmployeeById(Long employeeId) {
-        BankEmployee bankEmployee = bankEmployeeRepository.findById(employeeId)
-                .orElseThrow(() -> new NoSuchElementException("Bank employee not found with ID: " + employeeId));
+        BankEmployee bankEmployee = bankEmployeeRepository.findById(employeeId).orElse(null);
+        if (bankEmployee == null) {
+            throw new NoSuchElementException("Bank employee not found with ID: " + employeeId);
+        }
         return convertEntityToDTO(bankEmployee);
     }
 
     @Override
     public List<BankEmployeeDTO> getAllBankEmployees() {
-        return bankEmployeeRepository.findAll().stream()
-                .map(this::convertEntityToDTO)
-                .collect(Collectors.toList());
+        List<BankEmployee> employees = bankEmployeeRepository.findAll();
+        List<BankEmployeeDTO> dtos = new ArrayList<BankEmployeeDTO>();
+        for (BankEmployee employee : employees) {
+            dtos.add(convertEntityToDTO(employee));
+        }
+        return dtos;
     }
 
     @Override
     public BankEmployeeDTO updateBankEmployee(Long employeeId, BankEmployeeUpdateRequestDTO bankEmployeeUpdateRequestDTO) {
-        BankEmployee existingEmployee = bankEmployeeRepository.findById(employeeId)
-                .orElseThrow(() -> new NoSuchElementException("Bank employee not found with ID: " + employeeId));
+        BankEmployee existingEmployee = bankEmployeeRepository.findById(employeeId).orElse(null);
+        if (existingEmployee == null) {
+            throw new NoSuchElementException("Bank employee not found with ID: " + employeeId);
+        }
         if (bankEmployeeUpdateRequestDTO.getName() != null) {
             existingEmployee.setName(bankEmployeeUpdateRequestDTO.getName());
         }
@@ -84,7 +95,11 @@ public class BankEmployeeServiceImpl implements BankEmployeeService {
             BankBranch branch = new BankBranch();
             branch.setBranchId(bankEmployeeUpdateRequestDTO.getBranchId());
             existingEmployee.setBranch(branch);
-            bankBranchService.getBankBranchById(bankEmployeeUpdateRequestDTO.getBranchId()); // Ensure branch exists
+            try {
+                bankBranchService.getBankBranchById(bankEmployeeUpdateRequestDTO.getBranchId());
+            } catch (NoSuchElementException e) {
+                throw new ValidationException("Branch with ID " + bankEmployeeUpdateRequestDTO.getBranchId() + " not found.");
+            }
         }
         validateBankEmployee(existingEmployee);
         BankEmployee updatedEmployee = bankEmployeeRepository.save(existingEmployee);

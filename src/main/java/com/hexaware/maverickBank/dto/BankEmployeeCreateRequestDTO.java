@@ -16,6 +16,8 @@ public class BankEmployeeCreateRequestDTO {
     @NotNull(message = "Branch ID is required")
     private Long branchId;
 
+    private String employeeId; // Add this field
+
     public BankEmployeeCreateRequestDTO() {
     }
 
@@ -56,5 +58,13 @@ public class BankEmployeeCreateRequestDTO {
 
     public void setBranchId(Long branchId) {
         this.branchId = branchId;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 }

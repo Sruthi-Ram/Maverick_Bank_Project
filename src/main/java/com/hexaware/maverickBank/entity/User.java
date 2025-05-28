@@ -40,6 +40,19 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private BankEmployee bankEmployee;
+    
+    public User() {}
+    
+    public User(Long userId, String username, String password, String email, Role role, Customer customer, BankEmployee bankEmployee) {
+        this.userId = userId;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.customer = customer;
+        this.bankEmployee = bankEmployee;
+    }
+
 
     public Long getUserId() {
         return userId;
