@@ -1,15 +1,18 @@
 package com.hexaware.maverickBank.service.implementations;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.hexaware.maverickBank.dto.RoleDTO;
 import com.hexaware.maverickBank.entity.Role;
 import com.hexaware.maverickBank.repository.IRoleRepository;
 import com.hexaware.maverickBank.service.interfaces.RoleService;
+
 import jakarta.validation.ValidationException;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class RoleServiceImpl implements RoleService {

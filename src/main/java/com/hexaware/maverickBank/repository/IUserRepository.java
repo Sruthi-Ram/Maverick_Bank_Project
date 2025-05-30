@@ -13,4 +13,6 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.username = :identifier OR u.email = :identifier")
     User findByUsernameOrEmail(@Param("identifier") String identifier);
+    
+    User findByUserId(Long userId); // Add this line
 }

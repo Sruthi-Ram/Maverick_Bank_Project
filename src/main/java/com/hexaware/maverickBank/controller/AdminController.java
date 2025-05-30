@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
 import com.hexaware.maverickBank.dto.BankEmployeeDTO;
+import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
 import com.hexaware.maverickBank.dto.UserDTO;
 import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
@@ -45,11 +47,7 @@ public class AdminController {
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
         log.info("Received request to get user by ID: {}", userId);
         UserDTO user = adminService.getUserById(userId);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return (user != null) ? new ResponseEntity<>(user, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/getallusers")
@@ -63,11 +61,7 @@ public class AdminController {
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @RequestBody UserUpdateRequestDTO userUpdateRequestDTO) {
         log.info("Received request to update user with ID: {} and data: {}", userId, userUpdateRequestDTO);
         UserDTO updatedUser = adminService.updateUser(userId, userUpdateRequestDTO);
-        if (updatedUser != null) {
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return (updatedUser != null) ? new ResponseEntity<>(updatedUser, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/deleteuser/{userId}")
@@ -80,7 +74,7 @@ public class AdminController {
     // Bank Employee Management Endpoints
 
     @PostMapping("/createbankemployees")
-    public ResponseEntity<BankEmployeeDTO> createBankEmployee(@RequestBody com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO) {
+    public ResponseEntity<BankEmployeeDTO> createBankEmployee(@RequestBody BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO) {
         log.info("Received request to create bank employee with user ID: {}", bankEmployeeCreateRequestDTO.getUserId());
         BankEmployeeDTO createdEmployee = adminService.createBankEmployee(bankEmployeeCreateRequestDTO);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
@@ -90,11 +84,7 @@ public class AdminController {
     public ResponseEntity<BankEmployeeDTO> getBankEmployeeById(@PathVariable Long employeeId) {
         log.info("Received request to get bank employee by ID: {}", employeeId);
         BankEmployeeDTO employee = adminService.getBankEmployeeById(employeeId);
-        if (employee != null) {
-            return new ResponseEntity<>(employee, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return (employee != null) ? new ResponseEntity<>(employee, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/getallbankemployees")
@@ -105,14 +95,10 @@ public class AdminController {
     }
 
     @PutMapping("/updatebankemployees/{employeeId}")
-    public ResponseEntity<BankEmployeeDTO> updateBankEmployee(@PathVariable Long employeeId, @RequestBody com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO bankEmployeeUpdateRequestDTO) {
+    public ResponseEntity<BankEmployeeDTO> updateBankEmployee(@PathVariable Long employeeId, @RequestBody BankEmployeeUpdateRequestDTO bankEmployeeUpdateRequestDTO) {
         log.info("Received request to update bank employee with ID: {} and data: {}", employeeId, bankEmployeeUpdateRequestDTO);
         BankEmployeeDTO updatedEmployee = adminService.updateBankEmployee(employeeId, bankEmployeeUpdateRequestDTO);
-        if (updatedEmployee != null) {
-            return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return (updatedEmployee != null) ? new ResponseEntity<>(updatedEmployee, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/deletebankemployees/{employeeId}")

@@ -1,12 +1,15 @@
 package com.hexaware.maverickBank.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +38,9 @@ public class BankEmployeeController {
     @PostMapping("/createBankEmployee")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<BankEmployeeDTO> createBankEmployee(@Valid @RequestBody BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Create Bank Employee - Authentication: " + authentication);
+        System.out.println("Create Bank Employee - Authentication Details: " + (authentication != null ? authentication.getDetails() : null));
         BankEmployeeDTO createdBankEmployee = bankEmployeeService.createBankEmployee(bankEmployeeCreateRequestDTO);
         return new ResponseEntity<>(createdBankEmployee, HttpStatus.CREATED);
     }
@@ -51,6 +57,13 @@ public class BankEmployeeController {
 
     @GetMapping("/getAllBankEmployees")
     public ResponseEntity<List<BankEmployeeDTO>> getAllBankEmployees() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = null;
+        if (authentication != null && authentication.getDetails() instanceof Map) {
+            userId = (Long) ((Map<?, ?>) authentication.getDetails()).get("userId");
+        }
+
+        System.out.println("User ID accessing getAllBankEmployees: " + userId);
         List<BankEmployeeDTO> bankEmployeeDTOList = bankEmployeeService.getAllBankEmployees();
         return new ResponseEntity<>(bankEmployeeDTOList, HttpStatus.OK);
     }

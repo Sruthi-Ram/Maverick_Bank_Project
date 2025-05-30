@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -61,6 +64,7 @@ public class Account {
         this.accountId = accountId;
     }
 
+    @JsonBackReference
     public Customer getCustomer() {
         return customer;
     }
@@ -69,6 +73,7 @@ public class Account {
         this.customer = customer;
     }
 
+    @JsonBackReference
     public BankBranch getBranch() {
         return branch;
     }
@@ -117,6 +122,7 @@ public class Account {
         this.ifscCode = ifscCode;
     }
 
+    @JsonManagedReference
     public List<Transaction> getTransactions() {
         return transactions;
     }

@@ -12,21 +12,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.hexaware.maverickBank.dto.LoginRequestDTO;
 import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.dto.UserLoginRequestDTO;
 import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
 import com.hexaware.maverickBank.entity.Role;
 import com.hexaware.maverickBank.entity.User;
 import com.hexaware.maverickBank.repository.IRoleRepository;
 import com.hexaware.maverickBank.repository.IUserRepository;
+import com.hexaware.maverickBank.security.JwtService;
 import com.hexaware.maverickBank.service.interfaces.UserService;
-import com.hexaware.maverickBank.service.security.JwtService;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-@Transactional
+
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
@@ -87,27 +86,23 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(registrationRequestDTO.getPassword()));
         user.setEmail(registrationRequestDTO.getEmail());
 
-        // Fetch role safely
-        Role role = null;
         if (registrationRequestDTO.getRoleId() != null) {
-            role = roleRepository.findById(registrationRequestDTO.getRoleId())
-                    .orElseGet(() -> roleRepository.findByName("CUSTOMER"));
+            Role role = roleRepository.findById(registrationRequestDTO.getRoleId().longValue())
+                    .orElse(roleRepository.findByName("CUSTOMER"));
+            user.setRole(role);
+        } else {
+            Role defaultRole = roleRepository.findByName("CUSTOMER");
+            user.setRole(defaultRole);
         }
-        if (role == null) {
-            role = roleRepository.findByName("CUSTOMER");
-        }
-        user.setRole(role);
 
         User savedUser = userRepository.save(user);
-        userRepository.flush(); // Forces immediate DB sync, useful for debugging
-
         UserDTO userDTO = convertUserToDTO(savedUser);
         log.info("User registered successfully with ID: {}", userDTO.getUserId());
         return userDTO;
     }
 
     @Override
-    public String login(UserLoginRequestDTO loginRequestDTO) {
+    public String login(LoginRequestDTO loginRequestDTO) {
         try {
             // Perform authentication
             Authentication authentication = authenticationManager.authenticate(
@@ -205,4 +200,6 @@ public class UserServiceImpl implements UserService {
         }
         return dto;
     }
+
+
 }

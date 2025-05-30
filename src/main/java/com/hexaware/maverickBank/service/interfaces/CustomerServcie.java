@@ -5,7 +5,6 @@ import java.util.List;
 import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
 import com.hexaware.maverickBank.dto.CustomerDTO;
 import com.hexaware.maverickBank.dto.CustomerUpdateRequestDTO;
-import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 
 public interface CustomerServcie {
     CustomerDTO createCustomer(CustomerCreateRequestDTO customerCreateRequestDTO);

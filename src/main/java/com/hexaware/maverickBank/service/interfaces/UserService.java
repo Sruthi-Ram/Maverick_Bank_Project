@@ -1,7 +1,7 @@
 package com.hexaware.maverickBank.service.interfaces;
 
+import com.hexaware.maverickBank.dto.LoginRequestDTO;
 import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.dto.UserLoginRequestDTO;
 import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
 
@@ -11,5 +11,5 @@ public interface UserService {
     UserDTO updateUser(Long userId, UserUpdateRequestDTO updateRequestDTO); // Use DTO for update request
     
     void deleteUser(Long userId);
-    String login(UserLoginRequestDTO loginRequestDTO);
+    String login(LoginRequestDTO loginRequestDTO);
 }

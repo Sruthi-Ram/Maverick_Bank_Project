@@ -3,6 +3,8 @@ package com.hexaware.maverickBank.entity;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -52,6 +54,7 @@ public class Beneficiary {
         this.beneficiaryId = beneficiaryId;
     }
 
+    @JsonBackReference
     public Customer getCustomer() {
         return customer;
     }

@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.service.security;
+package com.hexaware.maverickBank.security;
 
 import java.io.IOException;
 
@@ -33,16 +33,16 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-
+        System.out.println("JWTAuthenticationFilter: Filtering request for path: " + request.getServletPath());
         String servletPath = request.getServletPath();
 
-        // Skip JWT filter for authentication/login endpoints
         if (
-        	    servletPath.startsWith("/auth") ||
-        	    servletPath.startsWith("/api/v1/users/login") ||
-        	    servletPath.startsWith("/api/v1/users/register")
-        	) {
- 
+                servletPath.startsWith("/auth") ||
+                servletPath.startsWith("/api/v1/users/login") ||
+                servletPath.startsWith("/api/v1/users/register") ||
+                servletPath.startsWith("/swagger-ui") ||
+                servletPath.startsWith("/v3/api-docs")
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,10 +55,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String jwt = authHeader.substring(BEARER_PREFIX.length());
-        final String userEmail = jwtService.extractUsername(jwt);
+        final String username = jwtService.extractUsername(jwt);
 
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

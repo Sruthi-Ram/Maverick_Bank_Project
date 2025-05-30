@@ -24,173 +24,167 @@ import com.hexaware.maverickBank.service.interfaces.AdminService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
+@Slf4j
 public class AdminServiceImpl implements AdminService {
 
-    @Autowired
-    private IUserRepository userRepository;
+	@Autowired
+	private IBankEmployeeRepository bankEmployeeRepository;
 
-    @Autowired
-    private IBankEmployeeRepository bankEmployeeRepository;
+	@Autowired
+	private IUserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder; // To encode the password
-    
-    @Autowired
-    private IRoleRepository roleRepository;
+	@Autowired
+	private IRoleRepository roleRepository;
 
-    // User Management
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDTO createUser(UserRegistrationRequestDTO userRegistrationRequestDTO) {
-        log.info("Creating user with username: {}", userRegistrationRequestDTO.getUsername());
-        User user = new User();
-        BeanUtils.copyProperties(userRegistrationRequestDTO, user);
-        user.setPassword(passwordEncoder.encode(userRegistrationRequestDTO.getPassword())); // Encode password
-        User savedUser = userRepository.save(user);
-        UserDTO userDTO = new UserDTO();
-        BeanUtils.copyProperties(savedUser, userDTO);
-        log.info("User created successfully with ID: {}", userDTO.getUserId());
-        return userDTO;
-    }
+	// User Management
 
-    @Override
-    public UserDTO getUserById(Long userId) {
-        log.info("Fetching user by ID: {}", userId);
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            UserDTO userDTO = new UserDTO();
-            BeanUtils.copyProperties(userOptional.get(), userDTO);
-            log.info("User found with ID: {}", userId);
-            return userDTO;
-        } else {
-            log.warn("User not found with ID: {}", userId);
-            return null; // Or throw an exception
-        }
-    }
+	@Override
+	public UserDTO createUser(UserRegistrationRequestDTO userRegistrationRequestDTO) {
+		log.info("Creating user with username: {}", userRegistrationRequestDTO.getUsername());
+		User user = new User();
+		BeanUtils.copyProperties(userRegistrationRequestDTO, user);
+		user.setPassword(passwordEncoder.encode(userRegistrationRequestDTO.getPassword()));
+		User savedUser = userRepository.save(user);
+		UserDTO userDTO = new UserDTO();
+		BeanUtils.copyProperties(savedUser, userDTO);
+		log.info("User created successfully with ID: {}", userDTO.getUserId());
+		return userDTO;
+	}
 
-    @Override
-    public List<UserDTO> getAllUsers() {
-        log.info("Fetching all users");
-        List<User> users = userRepository.findAll();
-        List<UserDTO> userDTOs = users.stream()
-                .map(user -> {
-                    UserDTO userDTO = new UserDTO();
-                    BeanUtils.copyProperties(user, userDTO);
-                    return userDTO;
-                })
-                .collect(Collectors.toList());
-        log.info("Fetched {} users", userDTOs.size());
-        return userDTOs;
-    }
+	@Override
+	public UserDTO getUserById(Long userId) {
+		log.info("Fetching user by ID: {}", userId);
+		Optional<User> userOptional = userRepository.findById(userId);
+		if (userOptional.isPresent()) {
+			UserDTO userDTO = new UserDTO();
+			BeanUtils.copyProperties(userOptional.get(), userDTO);
+			log.info("User found with ID: {}", userId);
+			return userDTO;
+		} else {
+			log.warn("User not found with ID: {}", userId);
+			return null;
+		}
+	}
 
-    @Override
-    public UserDTO updateUser(Long userId, UserUpdateRequestDTO userUpdateRequestDTO) {
-        log.info("Updating user with ID: {} and data: {}", userId, userUpdateRequestDTO);
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setEmail(userUpdateRequestDTO.getEmail());
-            if (userUpdateRequestDTO.getPassword() != null) {
-                user.setPassword(passwordEncoder.encode(userUpdateRequestDTO.getPassword()));
-            }
-            if (userUpdateRequestDTO.getRoleId() != null) {
-                Optional<com.hexaware.maverickBank.entity.Role> roleOptional = roleRepository.findById(userUpdateRequestDTO.getRoleId());
-                if (roleOptional.isPresent()) {
-                    user.setRole(roleOptional.get());
-                } else {
-                    log.warn("Role not found with ID: {}", userUpdateRequestDTO.getRoleId());
-                    // Consider throwing an exception here if role not found
-                    return null;
-                }
-            }
-            user.setUserId(userId); // Ensure the ID is not overwritten
-            User updatedUser = userRepository.save(user);
-            UserDTO userDTO = new UserDTO();
-            BeanUtils.copyProperties(updatedUser, userDTO);
-            log.info("User with ID {} updated successfully", userId);
-            return userDTO;
-        } else {
-            log.warn("User not found with ID: {}", userId);
-            return null; // Or throw an exception
-        }
-    }
+	@Override
+	public List<UserDTO> getAllUsers() {
+		log.info("Fetching all users");
+		List<User> users = userRepository.findAll();
+		List<UserDTO> userDTOs = users.stream().map(user -> {
+			UserDTO userDTO = new UserDTO();
+			BeanUtils.copyProperties(user, userDTO);
+			return userDTO;
+		}).collect(Collectors.toList());
+		log.info("Fetched {} users", userDTOs.size());
+		return userDTOs;
+	}
 
-    @Override
-    public void deleteUser(Long userId) {
-        log.info("Deleting user with ID: {}", userId);
-        userRepository.deleteById(userId);
-        log.info("User with ID {} deleted successfully", userId);
-    }
+	@Override
+	public UserDTO updateUser(Long userId, UserUpdateRequestDTO userUpdateRequestDTO) {
+		log.info("Updating user with ID: {} and data: {}", userId, userUpdateRequestDTO);
+		Optional<User> userOptional = userRepository.findById(userId);
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			user.setEmail(userUpdateRequestDTO.getEmail());
 
-    // Bank Employee Management
+			if (userUpdateRequestDTO.getPassword() != null) {
+				user.setPassword(passwordEncoder.encode(userUpdateRequestDTO.getPassword()));
+			}
 
-    @Override
-    public BankEmployeeDTO createBankEmployee(BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO) {
-        log.info("Creating bank employee with user ID: {}", bankEmployeeCreateRequestDTO.getUserId());
-        BankEmployee bankEmployee = new BankEmployee();
-        BeanUtils.copyProperties(bankEmployeeCreateRequestDTO, bankEmployee);
-        BankEmployee savedEmployee = bankEmployeeRepository.save(bankEmployee);
-        BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
-        BeanUtils.copyProperties(savedEmployee, bankEmployeeDTO);
-        log.info("Bank employee created successfully with ID: {}", bankEmployeeDTO.getEmployeeId());
-        return bankEmployeeDTO;
-    }
+			if (userUpdateRequestDTO.getRoleId() != null) {
+				roleRepository.findById(userUpdateRequestDTO.getRoleId()).ifPresentOrElse(user::setRole, () -> {
+					log.warn("Role not found with ID: {}", userUpdateRequestDTO.getRoleId());
+				});
+			}
 
-    @Override
-    public BankEmployeeDTO getBankEmployeeById(Long employeeId) {
-        log.info("Fetching bank employee by ID: {}", employeeId);
-        Optional<BankEmployee> bankEmployeeOptional = bankEmployeeRepository.findById(employeeId);
-        if (bankEmployeeOptional.isPresent()) {
-            BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
-            BeanUtils.copyProperties(bankEmployeeOptional.get(), bankEmployeeDTO);
-            log.info("Bank employee found with ID: {}", employeeId);
-            return bankEmployeeDTO;
-        } else {
-            log.warn("Bank employee not found with ID: {}", employeeId);
-            return null; // Or throw an exception
-        }
-    }
+			user.setUserId(userId);
+			User updatedUser = userRepository.save(user);
+			UserDTO userDTO = new UserDTO();
+			BeanUtils.copyProperties(updatedUser, userDTO);
+			log.info("User with ID {} updated successfully", userId);
+			return userDTO;
+		} else {
+			log.warn("User not found with ID: {}", userId);
+			return null;
+		}
+	}
 
-    @Override
-    public List<BankEmployeeDTO> getAllBankEmployees() {
-        log.info("Fetching all bank employees");
-        List<BankEmployee> bankEmployees = bankEmployeeRepository.findAll();
-        List<BankEmployeeDTO> bankEmployeeDTOs = bankEmployees.stream()
-                .map(bankEmployee -> {
-                    BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
-                    BeanUtils.copyProperties(bankEmployee, bankEmployeeDTO);
-                    return bankEmployeeDTO;
-                })
-                .collect(Collectors.toList());
-        log.info("Fetched {} bank employees", bankEmployeeDTOs.size());
-        return bankEmployeeDTOs;
-    }
+	@Override
+	public void deleteUser(Long userId) {
+		log.info("Deleting user with ID: {}", userId);
+		userRepository.deleteById(userId);
+		log.info("User with ID {} deleted successfully", userId);
+	}
+	// Bank Employee Management
 
-    @Override
-    public BankEmployeeDTO updateBankEmployee(Long employeeId, BankEmployeeUpdateRequestDTO bankEmployeeUpdateRequestDTO) {
-        log.info("Updating bank employee with ID: {} and data: {}", employeeId, bankEmployeeUpdateRequestDTO);
-        Optional<BankEmployee> bankEmployeeOptional = bankEmployeeRepository.findById(employeeId);
-        if (bankEmployeeOptional.isPresent()) {
-            BankEmployee bankEmployee = bankEmployeeOptional.get();
-            BeanUtils.copyProperties(bankEmployeeUpdateRequestDTO, bankEmployee);
-            bankEmployee.setEmployeeId(employeeId); // Ensure the ID is not overwritten
-            BankEmployee updatedEmployee = bankEmployeeRepository.save(bankEmployee);
-            BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
-            BeanUtils.copyProperties(updatedEmployee, bankEmployeeDTO);
-            log.info("Bank employee with ID {} updated successfully", employeeId);
-            return bankEmployeeDTO;
-        } else {
-            log.warn("Bank employee not found with ID: {}", employeeId);
-            return null; // Or throw an exception
-        }
-    }
+	@Override
+	public BankEmployeeDTO createBankEmployee(BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO) {
+		log.info("Creating bank employee with user ID: {}", bankEmployeeCreateRequestDTO.getUserId());
+		BankEmployee bankEmployee = new BankEmployee();
+		BeanUtils.copyProperties(bankEmployeeCreateRequestDTO, bankEmployee);
+		BankEmployee savedEmployee = bankEmployeeRepository.save(bankEmployee);
+		BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
+		BeanUtils.copyProperties(savedEmployee, bankEmployeeDTO);
+		log.info("Bank employee created successfully with ID: {}", bankEmployeeDTO.getEmployeeId());
+		return bankEmployeeDTO;
+	}
 
-    @Override
-    public void deleteBankEmployee(Long employeeId) {
-        log.info("Deleting bank employee with ID: {}", employeeId);
-        bankEmployeeRepository.deleteById(employeeId);
-        log.info("Bank employee with ID {} deleted successfully", employeeId);
-    }
+	@Override
+	public BankEmployeeDTO getBankEmployeeById(Long employeeId) {
+		log.info("Fetching bank employee by ID: {}", employeeId);
+		Optional<BankEmployee> bankEmployeeOptional = bankEmployeeRepository.findById(employeeId);
+		if (bankEmployeeOptional.isPresent()) {
+			BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
+			BeanUtils.copyProperties(bankEmployeeOptional.get(), bankEmployeeDTO);
+			log.info("Bank employee found with ID: {}", employeeId);
+			return bankEmployeeDTO;
+		} else {
+			log.warn("Bank employee not found with ID: {}", employeeId);
+			return null; // Or throw an exception
+		}
+	}
+
+	@Override
+	public List<BankEmployeeDTO> getAllBankEmployees() {
+		log.info("Fetching all bank employees");
+		List<BankEmployee> bankEmployees = bankEmployeeRepository.findAll();
+		List<BankEmployeeDTO> bankEmployeeDTOs = bankEmployees.stream().map(bankEmployee -> {
+			BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
+			BeanUtils.copyProperties(bankEmployee, bankEmployeeDTO);
+			return bankEmployeeDTO;
+		}).collect(Collectors.toList());
+		log.info("Fetched {} bank employees", bankEmployeeDTOs.size());
+		return bankEmployeeDTOs;
+	}
+
+	@Override
+	public BankEmployeeDTO updateBankEmployee(Long employeeId,
+			BankEmployeeUpdateRequestDTO bankEmployeeUpdateRequestDTO) {
+		log.info("Updating bank employee with ID: {} and data: {}", employeeId, bankEmployeeUpdateRequestDTO);
+		Optional<BankEmployee> bankEmployeeOptional = bankEmployeeRepository.findById(employeeId);
+		if (bankEmployeeOptional.isPresent()) {
+			BankEmployee bankEmployee = bankEmployeeOptional.get();
+			BeanUtils.copyProperties(bankEmployeeUpdateRequestDTO, bankEmployee);
+			bankEmployee.setEmployeeId(employeeId); // Ensure the ID is not overwritten
+			BankEmployee updatedEmployee = bankEmployeeRepository.save(bankEmployee);
+			BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
+			BeanUtils.copyProperties(updatedEmployee, bankEmployeeDTO);
+			log.info("Bank employee with ID {} updated successfully", employeeId);
+			return bankEmployeeDTO;
+		} else {
+			log.warn("Bank employee not found with ID: {}", employeeId);
+			return null; // Or throw an exception
+		}
+	}
+
+	@Override
+	public void deleteBankEmployee(Long employeeId) {
+		log.info("Deleting bank employee with ID: {}", employeeId);
+		bankEmployeeRepository.deleteById(employeeId);
+		log.info("Bank employee with ID {} deleted successfully", employeeId);
+	}
 }

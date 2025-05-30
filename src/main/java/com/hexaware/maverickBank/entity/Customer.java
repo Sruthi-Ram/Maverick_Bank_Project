@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,8 +41,8 @@ public class Customer {
 
     private String panNumber;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", unique = true, nullable = false)
+    @OneToOne(optional = false)
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -119,14 +121,15 @@ public class Customer {
         this.panNumber = panNumber;
     }
 
-    public User getUser() {
+    public User getUserId() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUserId(User user) {
         this.user = user;
     }
 
+    @JsonManagedReference
     public List<Account> getAccounts() {
         return accounts;
     }
@@ -135,6 +138,7 @@ public class Customer {
         this.accounts = accounts;
     }
 
+    @JsonManagedReference
     public List<Beneficiary> getBeneficiaries() {
         return beneficiaries;
     }
@@ -164,12 +168,12 @@ public class Customer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return Objects.equals(customerId, customer.customerId) && Objects.equals(name, customer.name) && Objects.equals(gender, customer.gender) && Objects.equals(contactNumber, customer.contactNumber) && Objects.equals(address, customer.address) && Objects.equals(dateOfBirth, customer.dateOfBirth) && Objects.equals(aadharNumber, customer.aadharNumber) && Objects.equals(panNumber, customer.panNumber);
+        return Objects.equals(customerId, customer.customerId) && Objects.equals(name, customer.name) && Objects.equals(gender, customer.gender) && Objects.equals(contactNumber, customer.contactNumber) && Objects.equals(address, customer.address) && Objects.equals(dateOfBirth, customer.dateOfBirth) && Objects.equals(aadharNumber, customer.aadharNumber) && Objects.equals(panNumber, customer.panNumber) && Objects.equals(user, customer.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customerId, name, gender, contactNumber, address, dateOfBirth, aadharNumber, panNumber);
+        return Objects.hash(customerId, name, gender, contactNumber, address, dateOfBirth, aadharNumber, panNumber, user);
     }
 
     @Override
@@ -183,7 +187,7 @@ public class Customer {
                 ", dateOfBirth=" + dateOfBirth +
                 ", aadharNumber='" + aadharNumber + '\'' +
                 ", panNumber='" + panNumber + '\'' +
-                ", user=" + (user != null ? user.getUserId() : null) +
+                ", userId=" + user +
                 '}';
     }
 }

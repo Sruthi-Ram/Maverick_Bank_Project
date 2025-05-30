@@ -1,9 +1,10 @@
 package com.hexaware.maverickBank.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import java.math.BigDecimal;
 
 public class AccountCreateRequestDTO {
 
@@ -13,8 +14,7 @@ public class AccountCreateRequestDTO {
     @NotNull(message = "Branch ID is required")
     private Long branchId;
 
-    @NotBlank(message = "Account number cannot be blank")
-    private String accountNumber;
+   
 
     @NotBlank(message = "Account type cannot be blank")
     private String accountType;
@@ -28,10 +28,10 @@ public class AccountCreateRequestDTO {
     public AccountCreateRequestDTO() {
     }
 
-    public AccountCreateRequestDTO(Long customerId, Long branchId, String accountNumber, String accountType, BigDecimal balance, String ifscCode) {
+    public AccountCreateRequestDTO(Long customerId, Long branchId, String accountType, BigDecimal balance, String ifscCode) {
         this.customerId = customerId;
         this.branchId = branchId;
-        this.accountNumber = accountNumber;
+ 
         this.accountType = accountType;
         this.balance = balance;
         this.ifscCode = ifscCode;
@@ -53,13 +53,7 @@ public class AccountCreateRequestDTO {
         this.branchId = branchId;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
+    
 
     public String getAccountType() {
         return accountType;

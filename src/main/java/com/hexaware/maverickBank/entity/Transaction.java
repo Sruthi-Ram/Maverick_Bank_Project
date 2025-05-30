@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -50,6 +52,7 @@ public class Transaction {
         this.transactionId = transactionId;
     }
 
+    @JsonBackReference
     public Account getAccount() {
         return account;
     }
@@ -89,7 +92,8 @@ public class Transaction {
     public void setDescription(String description) {
         this.description = description;
     }
-
+    
+    @JsonBackReference
     public Beneficiary getBeneficiary() {
         return beneficiary;
     }

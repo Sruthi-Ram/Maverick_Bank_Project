@@ -1,53 +1,57 @@
 package com.hexaware.maverickBank.service.implementations;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.hexaware.maverickBank.entity.Role;
 import com.hexaware.maverickBank.entity.User;
 import com.hexaware.maverickBank.repository.IUserRepository;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private IUserRepository userRepository;
+    private final IUserRepository userRepository;
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("loadUserByUsername called for username: {}", username);
-
-        User user = userRepository.findByUsernameOrEmail(username);
-
-        if (user == null) {
-            log.warn("User not found with username/email: {}", username);
-            throw new UsernameNotFoundException("User not found with username: " + username);
+    public UserDetails loadUserByUsername(String userIdStr) throws UsernameNotFoundException {
+        try {
+            Long userId = Long.parseLong(userIdStr);
+            User user = userRepository.findByUserId(userId);
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found with ID: " + userId);
+            }
+            return new org.springframework.security.core.userdetails.User(
+                    user.getUsername(),
+                    user.getPassword(),
+                    mapRoleToAuthorities(user.getRole())
+            );
+        } catch (NumberFormatException e) {
+            // If the input is not a valid Long, try loading by username or email (you might not need this part anymore)
+            User user = userRepository.findByUsernameOrEmail(userIdStr);
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found with username or email: " + userIdStr);
+            }
+            return new org.springframework.security.core.userdetails.User(
+                    user.getUsername(),
+                    user.getPassword(),
+                    mapRoleToAuthorities(user.getRole())
+            );
         }
-
-        log.info("User found: Username={}, Email={}, Role={}", user.getUsername(), user.getEmail(), user.getRole());
-
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        if (user.getRole() != null && user.getRole().getName() != null) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getRole().getName().toUpperCase()));
-        } else {
-            log.warn("User role is null for user: {}", username);
-        }
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                authorities
-        );
     }
-
-
+    private List<SimpleGrantedAuthority> mapRoleToAuthorities(Role role) {
+        if (role == null || role.getName() == null) {
+            // fallback to empty authorities or throw exception based on your use case
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+    }
 }

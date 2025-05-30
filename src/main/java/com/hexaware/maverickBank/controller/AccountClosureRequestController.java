@@ -76,6 +76,9 @@ public class AccountClosureRequestController {
         } catch (NoSuchElementException e) {
             log.warn("Account closure request not found with ID: {}", closureRequestId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error updating account closure request: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -35,15 +35,15 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Customer customer;
+   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+   private Customer customer;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private BankEmployee bankEmployee;
     
     public User() {}
     
-    public User(Long userId, String username, String password, String email, Role role, Customer customer, BankEmployee bankEmployee) {
+    public User(Long userId, String username, String password, String email, Role role,Customer customer,BankEmployee bankemployee) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -94,7 +94,7 @@ public class User {
         this.role = role;
     }
 
-    public Customer getCustomer() {
+   public Customer getCustomer() {
         return customer;
     }
 

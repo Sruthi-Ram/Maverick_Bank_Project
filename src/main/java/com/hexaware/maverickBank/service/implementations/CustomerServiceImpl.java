@@ -36,8 +36,7 @@ public class CustomerServiceImpl implements CustomerServcie {
         if (customer.getDateOfBirth() == null) {
             throw new ValidationException("Date of birth is required");
         }
-        LocalDate now = LocalDate.now();
-        Period age = Period.between(customer.getDateOfBirth(), now);
+        Period age = Period.between(customer.getDateOfBirth(), LocalDate.now());
         if (age.getYears() < 18) {
             throw new ValidationException("Customer must be at least 18 years old");
         }
@@ -51,7 +50,8 @@ public class CustomerServiceImpl implements CustomerServcie {
 
     @Override
     public CustomerDTO createCustomer(CustomerCreateRequestDTO customerCreateRequestDTO) {
-        if (customerCreateRequestDTO.getUserId() == null || userRepository.findById(customerCreateRequestDTO.getUserId()).isEmpty()) {
+        if (customerCreateRequestDTO.getUserId() == null ||
+            userRepository.findById(customerCreateRequestDTO.getUserId()).isEmpty()) {
             throw new ValidationException("User ID is required and must exist");
         }
         Customer customer = convertCreateRequestDTOtoEntity(customerCreateRequestDTO);
@@ -78,6 +78,7 @@ public class CustomerServiceImpl implements CustomerServcie {
     public CustomerDTO updateCustomer(Long customerId, CustomerUpdateRequestDTO customerUpdateRequestDTO) {
         Customer existingCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new NoSuchElementException("Customer not found with ID: " + customerId));
+
         if (customerUpdateRequestDTO.getName() != null) {
             existingCustomer.setName(customerUpdateRequestDTO.getName());
         }
@@ -99,6 +100,7 @@ public class CustomerServiceImpl implements CustomerServcie {
         if (customerUpdateRequestDTO.getPanNumber() != null) {
             existingCustomer.setPanNumber(customerUpdateRequestDTO.getPanNumber());
         }
+
         validateCustomer(existingCustomer);
         Customer updatedCustomer = customerRepository.save(existingCustomer);
         return convertEntityToDTO(updatedCustomer);
@@ -131,24 +133,27 @@ public class CustomerServiceImpl implements CustomerServcie {
         dto.setDateOfBirth(customer.getDateOfBirth());
         dto.setAadharNumber(customer.getAadharNumber());
         dto.setPanNumber(customer.getPanNumber());
-        if (customer.getUser() != null) {
-            dto.setUserId(customer.getUser().getUserId());
+
+        if (customer.getUserId() != null) {
+            dto.setUserId(customer.getUserId().getUserId());
         }
         return dto;
     }
 
-    private Customer convertCreateRequestDTOtoEntity(CustomerCreateRequestDTO createRequestDTO) {
+    private Customer convertCreateRequestDTOtoEntity(CustomerCreateRequestDTO dto) {
         Customer customer = new Customer();
-        customer.setName(createRequestDTO.getName());
-        customer.setGender(createRequestDTO.getGender());
-        customer.setContactNumber(createRequestDTO.getContactNumber());
-        customer.setAddress(createRequestDTO.getAddress());
-        customer.setDateOfBirth(createRequestDTO.getDateOfBirth());
-        customer.setAadharNumber(createRequestDTO.getAadharNumber());
-        customer.setPanNumber(createRequestDTO.getPanNumber());
-        User user = new User();
-        user.setUserId(createRequestDTO.getUserId());
-        customer.setUser(user);
+        customer.setName(dto.getName());
+        customer.setGender(dto.getGender());
+        customer.setContactNumber(dto.getContactNumber());
+        customer.setAddress(dto.getAddress());
+        customer.setDateOfBirth(dto.getDateOfBirth());
+        customer.setAadharNumber(dto.getAadharNumber());
+        customer.setPanNumber(dto.getPanNumber());
+
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new ValidationException("User not found with ID: " + dto.getUserId()));
+        customer.setUserId(user);
+
         return customer;
     }
 }

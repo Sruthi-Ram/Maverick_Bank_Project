@@ -20,84 +20,62 @@ import jakarta.validation.ValidationException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NoSuchElementException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "The requested resource was not found")
-    public String handleNoSuchElementException(NoSuchElementException ex) {
-        return ex.getMessage();
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Invalid input provided")
-    public String handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ex.getMessage();
+	@ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    @ResponseStatus(code = HttpStatus.CONFLICT, reason = "Could not complete operation due to data integrity issues")
-    public String handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        return ex.getMessage();
-    }
-
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<String> handleResponseStatusException(ResponseStatusException ex) {
-        return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
         StringBuilder errors = new StringBuilder("Validation failed: ");
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             errors.append(error.getDefaultMessage()).append("; ");
         });
-        return errors.toString();
+        return new ResponseEntity<>(errors.toString(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    @ResponseStatus(code=HttpStatus.BAD_REQUEST, reason = "Validation failed")
-    public String handleConstraintViolationException(ConstraintViolationException ex) {
-        return ex.getMessage();
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataAccessException.class)
-    @ResponseStatus(code=HttpStatus.INTERNAL_SERVER_ERROR, reason = "Error accessing the database")
-    public String handleDataAccessException(DataAccessException ex) {
-        return "Error accessing the database: " + ex.getMessage();
+    public ResponseEntity<String> handleDataAccessException(DataAccessException ex) {
+        return new ResponseEntity<>("Error accessing the database: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(JpaSystemException.class)
-    @ResponseStatus(code=HttpStatus.INTERNAL_SERVER_ERROR, reason = "Database system error")
-    public String handleJpaSystemException(JpaSystemException ex) {
-        return "Database system error: " + ex.getMessage();
+    public ResponseEntity<String> handleJpaSystemException(JpaSystemException ex) {
+        return new ResponseEntity<>("Database system error: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    @ResponseStatus(code=HttpStatus.BAD_REQUEST, reason = "Missing required parameter")
-    public String handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
-        return "Missing required parameter: " + ex.getParameterName();
+    public ResponseEntity<String> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        return new ResponseEntity<>("Missing required parameter: " + ex.getParameterName(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InsufficientBalanceException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleInsufficientBalanceException(InsufficientBalanceException ex) {
-        return ex.getMessage();
+    public ResponseEntity<String> handleInsufficientBalanceException(InsufficientBalanceException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidTransferAmountException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleInvalidTransferAmountException(InvalidTransferAmountException ex) {
-        return ex.getMessage();
+    public ResponseEntity<String> handleInvalidTransferAmountException(InvalidTransferAmountException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ValidationException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleValidationException(ValidationException ex) {
-        return ex.getMessage();
+    public ResponseEntity<String> handleValidationException(ValidationException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(code=HttpStatus.INTERNAL_SERVER_ERROR, reason = "An unexpected error occurred")
-    public String handleGlobalException(Exception ex) {
-        return "An unexpected error occurred: " + ex.getMessage();
+    public ResponseEntity<String> handleGlobalException(Exception ex) {
+        return new ResponseEntity<>("An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

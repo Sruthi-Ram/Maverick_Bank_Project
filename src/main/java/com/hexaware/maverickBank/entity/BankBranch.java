@@ -3,6 +3,8 @@ package com.hexaware.maverickBank.entity;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -78,6 +80,7 @@ public class BankBranch {
         this.ifscPrefix = ifscPrefix;
     }
 
+    @JsonManagedReference
     public List<Account> getAccounts() {
         return accounts;
     }

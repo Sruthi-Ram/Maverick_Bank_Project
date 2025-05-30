@@ -5,7 +5,6 @@ import java.util.List;
 import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
 import com.hexaware.maverickBank.dto.BankEmployeeDTO;
 import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
-import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 
 public interface BankEmployeeService {
     BankEmployeeDTO createBankEmployee(BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO);
