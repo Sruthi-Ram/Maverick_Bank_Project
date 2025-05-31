@@ -29,7 +29,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/employees")
-@PreAuthorize("hasRole('BANK_EMPLOYEE')")
 public class BankEmployeeController {
 
     @Autowired
@@ -37,8 +36,9 @@ public class BankEmployeeController {
 
     @PostMapping("/createBankEmployee")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMINISTRATOR') or hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<BankEmployeeDTO> createBankEmployee(@Valid @RequestBody BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO) {
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         System.out.println("Create Bank Employee - Authentication: " + authentication);
         System.out.println("Create Bank Employee - Authentication Details: " + (authentication != null ? authentication.getDetails() : null));
         BankEmployeeDTO createdBankEmployee = bankEmployeeService.createBankEmployee(bankEmployeeCreateRequestDTO);
@@ -46,16 +46,26 @@ public class BankEmployeeController {
     }
 
     @GetMapping("/getBankEmployeeById/{employeeId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE') or hasRole('ADMINISTRATOR')")
     public ResponseEntity<BankEmployeeDTO> getBankEmployeeById(@PathVariable Long employeeId) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Object principal = authentication.getPrincipal();
+            String username = "";
+            if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+                username = ((org.springframework.security.core.userdetails.UserDetails) principal).getUsername();
+            }
             BankEmployeeDTO bankEmployeeDTO = bankEmployeeService.getBankEmployeeById(employeeId);
             return new ResponseEntity<>(bankEmployeeDTO, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
     @GetMapping("/getAllBankEmployees")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<List<BankEmployeeDTO>> getAllBankEmployees() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = null;
@@ -69,17 +79,27 @@ public class BankEmployeeController {
     }
 
     @PutMapping("/updateBankEmployee/{employeeId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE') or hasRole('ADMINISTRATOR')")
     public ResponseEntity<BankEmployeeDTO> updateBankEmployee(@PathVariable Long employeeId, @Valid @RequestBody BankEmployeeUpdateRequestDTO bankEmployeeUpdateRequestDTO) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Object principal = authentication.getPrincipal();
+            String username = "";
+            if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+                username = ((org.springframework.security.core.userdetails.UserDetails) principal).getUsername();
+            }
             BankEmployeeDTO updatedBankEmployee = bankEmployeeService.updateBankEmployee(employeeId, bankEmployeeUpdateRequestDTO);
             return new ResponseEntity<>(updatedBankEmployee, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
     @DeleteMapping("/deleteBankEmployee/{employeeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<Void> deleteBankEmployee(@PathVariable Long employeeId) {
         try {
             bankEmployeeService.deleteBankEmployee(employeeId);
@@ -90,12 +110,21 @@ public class BankEmployeeController {
     }
 
     @GetMapping("/getBankEmployeeByUserId/{userId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE') or hasRole('ADMINISTRATOR')")
     public ResponseEntity<BankEmployeeDTO> getBankEmployeeByUserId(@PathVariable Long userId) {
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Object principal = authentication.getPrincipal();
+            String username = "";
+            if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+                username = ((org.springframework.security.core.userdetails.UserDetails) principal).getUsername();
+            }
             BankEmployeeDTO bankEmployeeDTO = bankEmployeeService.getBankEmployeeByUserId(userId);
             return new ResponseEntity<>(bankEmployeeDTO, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 }

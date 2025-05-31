@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
@@ -75,9 +76,23 @@ public class CustomerServiceImpl implements CustomerServcie {
     }
 
     @Override
-    public CustomerDTO updateCustomer(Long customerId, CustomerUpdateRequestDTO customerUpdateRequestDTO) {
+    public CustomerDTO updateCustomer(Long customerId, CustomerUpdateRequestDTO customerUpdateRequestDTO,
+            UserDetails userDetails) {
         Customer existingCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new NoSuchElementException("Customer not found with ID: " + customerId));
+
+        // Get the user ID of the logged-in user
+        String username = userDetails.getUsername();
+        User loggedInUser = userRepository.findByUsername(username);
+        Long loggedInUserId = loggedInUser.getUserId(); // Assuming your User entity has a getUserId() method
+
+        // Get the user ID associated with the customer being updated
+        Long customerUserId = existingCustomer.getUserId().getUserId(); // Assuming your Customer entity has a getUserId() method
+
+        // Check if the logged-in user's ID matches the customer's user ID
+        if (!loggedInUserId.equals(customerUserId)) {
+            throw new IllegalArgumentException("You are not authorized to update this customer's information.");
+        }
 
         if (customerUpdateRequestDTO.getName() != null) {
             existingCustomer.setName(customerUpdateRequestDTO.getName());
@@ -156,4 +171,6 @@ public class CustomerServiceImpl implements CustomerServcie {
 
         return customer;
     }
+
+
 }

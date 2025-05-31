@@ -51,7 +51,7 @@ public class UserController {
     @Autowired
     private IUserRepository userRepository;
 
-    // ✅ Register new user
+  
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserDTO> registerUser(@Valid @RequestBody UserRegistrationRequestDTO registrationRequestDTO) {
@@ -86,7 +86,7 @@ public class UserController {
 
 
 
-    // ✅ Get user by ID (JWT protected)
+ 
     @GetMapping("/getUserById/{userId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
@@ -98,7 +98,7 @@ public class UserController {
         }
     }
 
-    // ✅ Update user by ID (JWT protected)
+    
     @PutMapping("/updateUser/{userId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @Valid @RequestBody UserUpdateRequestDTO updateRequestDTO) {
@@ -110,7 +110,7 @@ public class UserController {
         }
     }
 
-    // ✅ Delete user by ID (ADMIN only)
+   
     @DeleteMapping("/deleteUser/{userId}")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {

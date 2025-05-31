@@ -63,7 +63,7 @@ public class RoleServiceImpl implements RoleService {
         if (!roleRepository.existsById(roleId)) {
             throw new NoSuchElementException("Role not found with ID: " + roleId);
         }
-        // Consider adding logic to prevent deleting default or system roles
+        
         roleRepository.deleteById(roleId);
     }
 
@@ -83,7 +83,7 @@ public class RoleServiceImpl implements RoleService {
     private Role convertDTOtoEntity(RoleDTO roleDTO) {
         Role role = new Role();
         role.setName(roleDTO.getName());
-        role.setRoleId(roleDTO.getRoleId()); // Only if you want to set the ID, usually it's auto-generated
+        role.setRoleId(roleDTO.getRoleId()); 
         return role;
     }
 }

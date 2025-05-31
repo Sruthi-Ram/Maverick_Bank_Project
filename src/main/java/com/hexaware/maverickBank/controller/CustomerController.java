@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,7 @@ import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
 import com.hexaware.maverickBank.dto.CustomerDTO;
 import com.hexaware.maverickBank.dto.CustomerUpdateRequestDTO;
 import com.hexaware.maverickBank.service.interfaces.CustomerServcie;
+import org.springframework.security.core.Authentication;
 
 import jakarta.validation.Valid;
 
@@ -56,9 +59,12 @@ public class CustomerController {
     }
 
     @PutMapping("/updateCustomer/{customerId}")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('BANK_EMPLOYEE') or hasRole('ADMINISTRATOR')")
     public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long customerId, @Valid @RequestBody CustomerUpdateRequestDTO customerUpdateRequestDTO) {
         try {
-            CustomerDTO updatedCustomer = customerService.updateCustomer(customerId, customerUpdateRequestDTO);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            CustomerDTO updatedCustomer = customerService.updateCustomer(customerId, customerUpdateRequestDTO, userDetails);
             return new ResponseEntity<>(updatedCustomer, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

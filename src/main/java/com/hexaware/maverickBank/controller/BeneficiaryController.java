@@ -33,14 +33,14 @@ public class BeneficiaryController {
 
     @PostMapping("/createBeneficiary")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMINISTRATOR') or hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<BeneficiaryDTO> createBeneficiary(@Valid @RequestBody BeneficiaryCreateRequestDTO beneficiaryCreateRequestDTO) {
         BeneficiaryDTO createdBeneficiary = beneficiaryService.createBeneficiary(beneficiaryCreateRequestDTO);
         return new ResponseEntity<>(createdBeneficiary, HttpStatus.CREATED);
     }
 
     @GetMapping("/getBeneficiaryById/{beneficiaryId}")
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER')or hasRole('ADMINISTRATOR') or hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<BeneficiaryDTO> getBeneficiaryById(@PathVariable Long beneficiaryId) {
         try {
             BeneficiaryDTO beneficiaryDTO = beneficiaryService.getBeneficiaryById(beneficiaryId);

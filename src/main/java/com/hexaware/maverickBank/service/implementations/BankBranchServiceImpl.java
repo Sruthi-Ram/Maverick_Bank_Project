@@ -89,7 +89,7 @@ public class BankBranchServiceImpl implements BankBranchService {
         if (!bankBranchRepository.existsById(branchId)) {
             throw new NoSuchElementException("Bank branch not found with ID: " + branchId);
         }
-        // Consider adding logic to prevent deleting branches with associated accounts or employees
+        
         bankBranchRepository.deleteById(branchId);
     }
 

@@ -48,9 +48,9 @@ public class AccountClosureRequestServiceImpl implements AccountClosureRequestSe
             throw new ValidationException("Reason for closure is required");
         }
         try {
-            if (accountService.getAccountById(requestDTO.getAccountId()).getBalance().compareTo(BigDecimal.ZERO) > 0) {
+            if (accountService.getAccountById(requestDTO.getAccountId()).getBalance().compareTo(BigDecimal.ZERO) > 1) {
                 log.warn("Account {} has a non-zero balance. Cannot close.", requestDTO.getAccountId());
-                throw new ValidationException("Account must have zero balance to be closed");
+                throw new ValidationException("Account must have less than 1 to be closed");
             }
         } catch (NoSuchElementException e) {
             log.error("Account with ID {} not found during validation.", requestDTO.getAccountId(), e);

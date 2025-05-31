@@ -36,7 +36,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         if (loanApplication.getPurpose() == null || loanApplication.getPurpose().isEmpty()) {
             throw new ValidationException("Purpose of loan cannot be empty");
         }
-        // Add more validation rules based on loan type, customer eligibility, etc.
+        
     }
 
     @Override

@@ -1,9 +1,8 @@
 package com.hexaware.maverickBank.exception;
 
-public class InsufficientBalanceException extends RuntimeException { // Or Exception, depending on your design
+public class InsufficientBalanceException extends RuntimeException { 
 
-    private static final long serialVersionUID = 1L; // You can assign any long value here
-
+    private static final long serialVersionUID = 1L; 
     public InsufficientBalanceException(String message) {
         super(message);
     }

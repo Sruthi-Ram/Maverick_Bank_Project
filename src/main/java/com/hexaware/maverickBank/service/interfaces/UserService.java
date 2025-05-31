@@ -4,6 +4,7 @@ import com.hexaware.maverickBank.dto.LoginRequestDTO;
 import com.hexaware.maverickBank.dto.UserDTO;
 import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
+import com.hexaware.maverickBank.entity.User;
 
 public interface UserService {
     UserDTO registerUser(UserRegistrationRequestDTO registrationRequestDTO); // Use DTO for registration request
@@ -12,4 +13,5 @@ public interface UserService {
     
     void deleteUser(Long userId);
     String login(LoginRequestDTO loginRequestDTO);
+	User getUserByUsername(String username);
 }

@@ -104,7 +104,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String login(LoginRequestDTO loginRequestDTO) {
         try {
-            // Perform authentication
+            
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequestDTO.getUsername(),
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService {
                     )
             );
 
-            // Extract UserDetails and generate JWT token
+            
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String jwtToken = jwtService.generateToken(userDetails);
             log.info("User logged in successfully: {}", loginRequestDTO.getUsername());
@@ -199,6 +199,11 @@ public class UserServiceImpl implements UserService {
             dto.setRoleId(user.getRole().getRoleId());
         }
         return dto;
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
 

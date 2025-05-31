@@ -89,7 +89,7 @@ public class LoanServiceImpl implements LoanService {
         if (!loanRepository.existsById(loanId)) {
             throw new NoSuchElementException("Loan not found with ID: " + loanId);
         }
-        // Consider adding logic to prevent deleting loans with active applications or disbursements
+       
         loanRepository.deleteById(loanId);
     }
 

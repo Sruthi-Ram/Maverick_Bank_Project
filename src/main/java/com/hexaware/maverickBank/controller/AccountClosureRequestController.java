@@ -34,7 +34,7 @@ public class AccountClosureRequestController {
 
     @PostMapping("/createaccountclosurerequest")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER')or hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<AccountClosureRequestDTO> createAccountClosureRequest(@Valid @RequestBody AccountClosureRequestCreateRequestDTO requestDTO) {
         log.info("Received request to create account closure request: {}", requestDTO);
         AccountClosureRequestDTO createdRequest = accountClosureRequestService.createAccountClosureRequest(requestDTO);

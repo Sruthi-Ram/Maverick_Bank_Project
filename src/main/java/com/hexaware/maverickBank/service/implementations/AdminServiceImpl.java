@@ -169,7 +169,7 @@ public class AdminServiceImpl implements AdminService {
 		if (bankEmployeeOptional.isPresent()) {
 			BankEmployee bankEmployee = bankEmployeeOptional.get();
 			BeanUtils.copyProperties(bankEmployeeUpdateRequestDTO, bankEmployee);
-			bankEmployee.setEmployeeId(employeeId); // Ensure the ID is not overwritten
+			bankEmployee.setEmployeeId(employeeId); 
 			BankEmployee updatedEmployee = bankEmployeeRepository.save(bankEmployee);
 			BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
 			BeanUtils.copyProperties(updatedEmployee, bankEmployeeDTO);
@@ -177,7 +177,7 @@ public class AdminServiceImpl implements AdminService {
 			return bankEmployeeDTO;
 		} else {
 			log.warn("Bank employee not found with ID: {}", employeeId);
-			return null; // Or throw an exception
+			return null; 
 		}
 	}
 

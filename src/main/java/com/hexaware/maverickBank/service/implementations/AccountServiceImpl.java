@@ -101,7 +101,7 @@ public class AccountServiceImpl implements AccountService {
         if (accountUpdateRequestDTO.getIfscCode() != null) {
             existingAccount.setIfscCode(accountUpdateRequestDTO.getIfscCode());
         }
-        existingAccount.setDateOpened(existingAccount.getDateOpened()); // Keep the original opening date
+        existingAccount.setDateOpened(existingAccount.getDateOpened()); 
         Account updatedAccount = accountRepository.save(existingAccount);
         return convertEntityToDTO(updatedAccount);
     }
@@ -111,13 +111,13 @@ public class AccountServiceImpl implements AccountService {
         if (!accountRepository.existsById(accountId)) {
             throw new NoSuchElementException("Account not found with ID: " + accountId);
         }
-        // Consider adding logic to prevent deleting accounts with a balance
+        
         accountRepository.deleteById(accountId);
     }
 
     @Override
     public List<AccountDTO> getAccountsByCustomerId(Long customerId) {
-        getCustomerByIdForAccount(customerId); // Ensure customer exists
+        getCustomerByIdForAccount(customerId); 
         List<Account> accounts = accountRepository.findByCustomer_CustomerId(customerId);
         if (accounts.isEmpty()) {
             throw new NoSuchElementException("No accounts found for Customer ID: " + customerId);
@@ -138,13 +138,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Transaction> getTransactionsForAccount(Long accountId) {
-        getAccountById(accountId); // Throws exception if account not found
+        getAccountById(accountId); 
         return transactionRepository.findByAccount_AccountIdOrderByTransactionDateDesc(accountId);
     }
 
     @Override
     public List<Transaction> getTransactionsForAccountByDateRange(Long accountId, LocalDateTime startDate, LocalDateTime endDate) {
-        getAccountById(accountId); // Throws exception if account not found
+        getAccountById(accountId); 
         List<Transaction> transactions = transactionRepository.findByAccount_AccountIdAndTransactionDateBetweenOrderByTransactionDateDesc(accountId, startDate, endDate);
         if (transactions.isEmpty()) {
             throw new NoSuchElementException("No transactions found for Account ID: " + accountId + " within the given date range.");
@@ -158,7 +158,7 @@ public class AccountServiceImpl implements AccountService {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ValidationException("Deposit amount must be positive");
         }
-        // Additional business logic if needed (e.g., limits)
+      
         account.setBalance(account.getBalance().add(amount));
         accountRepository.save(account);
         Transaction transaction = new Transaction();
@@ -178,7 +178,7 @@ public class AccountServiceImpl implements AccountService {
         if (account.getBalance().compareTo(amount) < 0) {
             throw new InsufficientBalanceException("Insufficient balance in the account");
         }
-        // Additional business logic if needed (e.g., daily withdrawal limits)
+     
         account.setBalance(account.getBalance().subtract(amount));
         accountRepository.save(account);
         Transaction transaction = new Transaction();
@@ -201,7 +201,7 @@ public class AccountServiceImpl implements AccountService {
         if (fromAccount.getBalance().compareTo(amount) < 0) {
             throw new InsufficientBalanceException("Insufficient balance in the source account");
         }
-        // Additional business logic if needed (e.g., transfer limits)
+       
         withdraw(fromAccount, amount);
         deposit(toAccount, amount);
         Transaction transaction = new Transaction();

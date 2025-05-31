@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     mapRoleToAuthorities(user.getRole())
             );
         } catch (NumberFormatException e) {
-            // If the input is not a valid Long, try loading by username or email (you might not need this part anymore)
+            
             User user = userRepository.findByUsernameOrEmail(userIdStr);
             if (user == null) {
                 throw new UsernameNotFoundException("User not found with username or email: " + userIdStr);
@@ -49,7 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
     private List<SimpleGrantedAuthority> mapRoleToAuthorities(Role role) {
         if (role == null || role.getName() == null) {
-            // fallback to empty authorities or throw exception based on your use case
+           
             return Collections.emptyList();
         }
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.getName()));
