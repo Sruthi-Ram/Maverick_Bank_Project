@@ -40,6 +40,19 @@ public class Loan {
 
     @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LoanApplication> loanApplications;
+    
+    public Loan() {}
+    
+    public Loan(Long loanId, String loanType, BigDecimal principalAmount, BigDecimal interestRate, Integer tenureMonths, BigDecimal amountPaid, String status, List<LoanApplication> loanApplications) {
+        this.loanId = loanId;
+        this.loanType = loanType;
+        this.principalAmount = principalAmount;
+        this.interestRate = interestRate;
+        this.tenureMonths = tenureMonths;
+        this.amountPaid = amountPaid;
+        this.status = status;
+        this.loanApplications = loanApplications;
+    }
 
     public Long getLoanId() {
         return loanId;

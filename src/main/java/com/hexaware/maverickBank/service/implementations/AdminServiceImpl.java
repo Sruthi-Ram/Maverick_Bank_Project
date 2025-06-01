@@ -16,6 +16,7 @@ import com.hexaware.maverickBank.dto.UserDTO;
 import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
 import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
 import com.hexaware.maverickBank.entity.BankEmployee;
+import com.hexaware.maverickBank.entity.Role;
 import com.hexaware.maverickBank.entity.User;
 import com.hexaware.maverickBank.repository.IBankEmployeeRepository;
 import com.hexaware.maverickBank.repository.IRoleRepository;
@@ -48,9 +49,18 @@ public class AdminServiceImpl implements AdminService {
 		User user = new User();
 		BeanUtils.copyProperties(userRegistrationRequestDTO, user);
 		user.setPassword(passwordEncoder.encode(userRegistrationRequestDTO.getPassword()));
+
+		// Fetch the Role entity based on the roleId from the request
+		roleRepository.findById(userRegistrationRequestDTO.getRoleId()).ifPresentOrElse(user::setRole, () -> {
+			throw new RuntimeException("Role not found with ID: " + userRegistrationRequestDTO.getRoleId());
+		});
+
 		User savedUser = userRepository.save(user);
 		UserDTO userDTO = new UserDTO();
 		BeanUtils.copyProperties(savedUser, userDTO);
+		if (savedUser.getRole() != null) {
+			userDTO.setRoleId(savedUser.getRole().getRoleId());
+		}
 		log.info("User created successfully with ID: {}", userDTO.getUserId());
 		return userDTO;
 	}
@@ -62,6 +72,9 @@ public class AdminServiceImpl implements AdminService {
 		if (userOptional.isPresent()) {
 			UserDTO userDTO = new UserDTO();
 			BeanUtils.copyProperties(userOptional.get(), userDTO);
+			if (userOptional.get().getRole() != null) {
+				userDTO.setRoleId(userOptional.get().getRole().getRoleId());
+			}
 			log.info("User found with ID: {}", userId);
 			return userDTO;
 		} else {
@@ -77,6 +90,9 @@ public class AdminServiceImpl implements AdminService {
 		List<UserDTO> userDTOs = users.stream().map(user -> {
 			UserDTO userDTO = new UserDTO();
 			BeanUtils.copyProperties(user, userDTO);
+			if (user.getRole() != null) {
+				userDTO.setRoleId(user.getRole().getRoleId());
+			}
 			return userDTO;
 		}).collect(Collectors.toList());
 		log.info("Fetched {} users", userDTOs.size());
@@ -105,6 +121,9 @@ public class AdminServiceImpl implements AdminService {
 			User updatedUser = userRepository.save(user);
 			UserDTO userDTO = new UserDTO();
 			BeanUtils.copyProperties(updatedUser, userDTO);
+			if (updatedUser.getRole() != null) {
+				userDTO.setRoleId(updatedUser.getRole().getRoleId());
+			}
 			log.info("User with ID {} updated successfully", userId);
 			return userDTO;
 		} else {
@@ -126,9 +145,22 @@ public class AdminServiceImpl implements AdminService {
 		log.info("Creating bank employee with user ID: {}", bankEmployeeCreateRequestDTO.getUserId());
 		BankEmployee bankEmployee = new BankEmployee();
 		BeanUtils.copyProperties(bankEmployeeCreateRequestDTO, bankEmployee);
+
+		// Fetch the User entity based on the userId from the request
+		Optional<User> userOptional = userRepository.findById(bankEmployeeCreateRequestDTO.getUserId());
+		userOptional.ifPresentOrElse(bankEmployee::setUserId, () -> {
+			throw new RuntimeException("User not found with ID: " + bankEmployeeCreateRequestDTO.getUserId());
+		});
+
 		BankEmployee savedEmployee = bankEmployeeRepository.save(bankEmployee);
 		BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
 		BeanUtils.copyProperties(savedEmployee, bankEmployeeDTO);
+
+		// Manually set the userId in the DTO as BeanUtils might not copy it automatically from the User object
+		if (savedEmployee.getUserId() != null) {
+			bankEmployeeDTO.setUserId(savedEmployee.getUserId().getUserId());
+		}
+
 		log.info("Bank employee created successfully with ID: {}", bankEmployeeDTO.getEmployeeId());
 		return bankEmployeeDTO;
 	}
@@ -140,6 +172,9 @@ public class AdminServiceImpl implements AdminService {
 		if (bankEmployeeOptional.isPresent()) {
 			BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
 			BeanUtils.copyProperties(bankEmployeeOptional.get(), bankEmployeeDTO);
+			if (bankEmployeeOptional.get().getUserId() != null) {
+				bankEmployeeDTO.setUserId(bankEmployeeOptional.get().getUserId().getUserId());
+			}
 			log.info("Bank employee found with ID: {}", employeeId);
 			return bankEmployeeDTO;
 		} else {
@@ -155,6 +190,9 @@ public class AdminServiceImpl implements AdminService {
 		List<BankEmployeeDTO> bankEmployeeDTOs = bankEmployees.stream().map(bankEmployee -> {
 			BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
 			BeanUtils.copyProperties(bankEmployee, bankEmployeeDTO);
+			if (bankEmployee.getUserId() != null) {
+				bankEmployeeDTO.setUserId(bankEmployee.getUserId().getUserId());
+			}
 			return bankEmployeeDTO;
 		}).collect(Collectors.toList());
 		log.info("Fetched {} bank employees", bankEmployeeDTOs.size());
@@ -169,15 +207,23 @@ public class AdminServiceImpl implements AdminService {
 		if (bankEmployeeOptional.isPresent()) {
 			BankEmployee bankEmployee = bankEmployeeOptional.get();
 			BeanUtils.copyProperties(bankEmployeeUpdateRequestDTO, bankEmployee);
-			bankEmployee.setEmployeeId(employeeId); 
+			bankEmployee.setEmployeeId(employeeId);
 			BankEmployee updatedEmployee = bankEmployeeRepository.save(bankEmployee);
 			BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
 			BeanUtils.copyProperties(updatedEmployee, bankEmployeeDTO);
+
+			// Manually set the branchId in the DTO
+			if (updatedEmployee.getBranch() != null) {
+				bankEmployeeDTO.setBranchId(updatedEmployee.getBranch().getBranchId());
+			}
+			if (updatedEmployee.getUserId() != null) {
+				bankEmployeeDTO.setUserId(updatedEmployee.getUserId().getUserId());
+			}
 			log.info("Bank employee with ID {} updated successfully", employeeId);
 			return bankEmployeeDTO;
 		} else {
 			log.warn("Bank employee not found with ID: {}", employeeId);
-			return null; 
+			return null;
 		}
 	}
 
