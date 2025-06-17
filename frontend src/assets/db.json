@@ -1,0 +1,174 @@
+{
+  "users": [
+    {
+      "id": "3e9d",
+      "username": "Sruthi R",
+      "email": "sruthimaha242004@gmail.com",
+      "password": "Sairam@2004",
+      "roleId": 1
+    },
+    {
+      "id": "a4fc",
+      "username": "Deepak",
+      "email": "mdeepak4565@gmail.com",
+      "password": "Deepak@2002",
+      "roleId": 1
+    },
+    {
+      "id": "cced",
+      "username": "Subiksha",
+      "email": "subiksha2012@gmail.com",
+      "password": "Subiksha@2012",
+      "roleId": 3
+    }
+  ],
+  "customers": [
+    {
+      "id": "ce06",
+      "userId": "3e9d",
+      "name": "Sruthi Ramesh",
+      "gender": "Female",
+      "contactNumber": "8946021333",
+      "address": "L/851 TNHB Colony 2nd Scheme, Taj Nagar, Cauvery R. S Post",
+      "dateOfBirth": "2004-04-02",
+      "aadharNumber": "903755556351",
+      "panNumber": "ABCDE1234F"
+    },
+    {
+      "id": "096d",
+      "userId": "a4fc",
+      "name": "Deepak M",
+      "gender": "Male",
+      "contactNumber": "7010953230",
+      "address": "Tiruvannamalai,Chengam",
+      "dateOfBirth": "2002-01-18",
+      "aadharNumber": "123456789012",
+      "panNumber": "ABEHO4321W"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "c6a5",
+      "customerId": "ce06",
+      "branchId": 101,
+      "accountNumber": "SB123456789",
+      "accountType": "Savings",
+      "balance": 5000,
+      "dateOpened": "2025-06-07T13:46:27.349Z",
+      "ifscCode": "BANK0001234"
+    },
+    {
+      "id": "0404",
+      "customerId": "ce06",
+      "branchId": "102",
+      "accountNumber": "HD987654321",
+      "accountType": "Current",
+      "balance": 6000,
+      "dateOpened": "2025-06-07T13:46:27.349Z",
+      "ifscCode": "ABCD0123456"
+    },
+    {
+      "id": "dd1a",
+      "customerId": "096d",
+      "branchId": "101",
+      "accountNumber": "MN987654321",
+      "accountType": "Current",
+      "dateOpened": "2025-06-07T13:46:27.349Z",
+      "balance": 50500,
+      "ifscCode": "HDFC0004321"
+    }
+  ],
+  "transactions": [
+    {
+      "transactionId": 1,
+      "accountId": "c6a5",
+      "transactionType": "Withdraw",
+      "amount": 2000,
+      "transactionDate": "2025-06-01T10:00:00Z",
+      "description": "Salary credited",
+      "id": "dad3"
+    },
+    {
+      "transactionId": 2,
+      "accountId": "c6a5",
+      "transactionType": "Deposit",
+      "amount": 500,
+      "transactionDate": "2025-06-03T15:30:00Z",
+      "description": "Grocery shopping",
+      "id": "9c35"
+    },
+    {
+      "transactionId": 3,
+      "accountId": "0404",
+      "transactionType": "Withdraw",
+      "amount": 1500,
+      "transactionDate": "2025-06-02T12:00:00Z",
+      "description": "Freelance payment",
+      "id": "a2c2"
+    },
+    {
+      "transactionId": 4,
+      "accountId": "0404",
+      "transactionType": "Deposit",
+      "amount": 700,
+      "transactionDate": "2025-06-04T09:00:00Z",
+      "description": "Utility bill payment",
+      "id": "a350"
+    }
+  ],
+  "loans": [
+    {
+      "loanId": 1,
+      "loanType": "Home Loan",
+      "principalAmount": 500000,
+      "interestRate": 7.5,
+      "tenureMonths": 240,
+      "id": "6321"
+    },
+    {
+      "loanId": 2,
+      "loanType": "Personal Loan",
+      "principalAmount": 100000,
+      "interestRate": 11,
+      "tenureMonths": 60,
+      "id": "60ee"
+    },
+    {
+      "loanId": 3,
+      "loanType": "Medical Loan",
+      "principalAmount": 250000,
+      "interestRate": 15.6,
+      "tenureMonths": 93,
+      "id": "6bc7"
+    }
+  ],
+  "loanApplications": [
+    {
+      "id": "27cd",
+      "customerId": "ce06",
+      "loanId": 1,
+      "requestedAmount": 50000,
+      "purpose": "Home loan",
+      "applicationDate": "2025-06-08T08:09:00.032Z",
+      "status": "Pending"
+    },
+    {
+      "id": "e69b",
+      "customerId": "ce06",
+      "loanId": 2,
+      "requestedAmount": 100000,
+      "purpose": "Personal",
+      "applicationDate": "2025-06-08T08:11:39.807Z",
+      "status": "Pending"
+    },
+    {
+      "id": "40f8",
+      "customerId": "ce06",
+      "loanId": 3,
+      "requestedAmount": 5060000,
+      "purpose": "Heart operation purpose",
+      "applicationDate": "2025-06-08T10:35:30.314Z",
+      "status": "Pending"
+    }
+  ]
+}

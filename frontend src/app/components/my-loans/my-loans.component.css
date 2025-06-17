@@ -1,0 +1,15 @@
+/* Optional - to style status text */
+.text-warning {
+  font-weight: 600;
+  color: #ffc107 !important;
+}
+
+.text-success {
+  font-weight: 600;
+  color: #28a745 !important;
+}
+
+.text-danger {
+  font-weight: 600;
+  color: #dc3545 !important;
+}
