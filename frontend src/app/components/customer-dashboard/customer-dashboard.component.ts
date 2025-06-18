@@ -1,5 +1,6 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 import { CustomerService } from '../../services/customer.service';
 import { Customer } from '../../models/customer';
 
@@ -19,8 +20,15 @@ export class CustomerDashboardComponent implements OnInit {
   constructor(
     public renderer: Renderer2,
     public authService: AuthService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private router: Router
   ) {}
+
+  logout() {
+  this.authService.logout(); // clear tokens/session
+  this.router.navigate(['/login']); // redirect
+}
+
 
   ngOnInit() {
     

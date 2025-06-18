@@ -90,7 +90,13 @@
         Register
       </button>
 
-     
+      
+      <div class="text-center mt-3">
+        <small class="text-muted">
+          Already registered?
+          <a routerLink="/login" class="text-decoration-none text-primary fw-semibold">Login</a>
+        </small>
+      </div>
 
       <div *ngIf="errorMessage" class="alert alert-danger mt-3">
         {{ errorMessage }}
