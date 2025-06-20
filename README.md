@@ -53,19 +53,19 @@ This project is useful for learning full-stack development, JWT authentication, 
 
 ## Usage
 
-- **Customer**
+**Customer**
 - Register & Login
 - View and update profile
 - Open and view accounts
 - View transactions
 - Apply for loans
 
-- **Bank Employee**
+**Bank Employee**
 - View customer details
 - Manage accounts and transactions
 - Review and update loan applications
 
-- **Administrator**
+**Administrator**
 - Manage users and roles
 
 ---
