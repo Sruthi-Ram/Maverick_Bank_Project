@@ -21,6 +21,8 @@ This project is useful for learning full-stack development, JWT authentication, 
 - Maven
 - MySQL Server
 
+---
+
 ### Backend Setup
 
 1. Clone the repository:https://github.com/Sruthi-Ram/Maverick_Bank_Project
@@ -34,7 +36,6 @@ This project is useful for learning full-stack development, JWT authentication, 
 
 5. Run the Spring Boot app
    
----
 
 ### Frontend Setup
 
@@ -50,7 +51,7 @@ This project is useful for learning full-stack development, JWT authentication, 
 
 ---
 
-## 🚀 Usage
+## Usage
 
 - **Customer**
 - Register & Login
@@ -98,5 +99,7 @@ Contributions are welcome!
 - **Project Author:** Sruthi R  
 - **Email:** sruthimaha242004@gmail.com  
 - **GitHub:** https://github.com/Sruthi-Ram
+
+Thank you !
 
 
