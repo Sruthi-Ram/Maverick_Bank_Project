@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.service.implementations;
+package com.hexaware.maverickbank.service.implementations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -21,17 +21,17 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.BeanUtils;
 
-import com.hexaware.maverickBank.dto.BankBranchDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
-import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.entity.BankBranch;
-import com.hexaware.maverickBank.entity.BankEmployee;
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.IBankEmployeeRepository;
-import com.hexaware.maverickBank.service.interfaces.BankBranchService;
-import com.hexaware.maverickBank.service.interfaces.UserService;
+import com.hexaware.maverickbank.dto.BankBranchDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.UserDTO;
+import com.hexaware.maverickbank.dto.entity.BankBranch;
+import com.hexaware.maverickbank.dto.entity.BankEmployee;
+import com.hexaware.maverickbank.dto.entity.User;
+import com.hexaware.maverickbank.repository.IBankEmployeeRepository;
+import com.hexaware.maverickbank.service.interfaces.BankBranchService;
+import com.hexaware.maverickbank.service.interfaces.UserService;
 
 import jakarta.validation.ValidationException;
 

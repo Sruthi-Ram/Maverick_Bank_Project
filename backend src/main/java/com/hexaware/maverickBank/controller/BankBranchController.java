@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.BankBranchCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankBranchDTO;
-import com.hexaware.maverickBank.dto.BankBranchUpdateRequestDTO;
-import com.hexaware.maverickBank.service.interfaces.BankBranchService;
+import com.hexaware.maverickbank.dto.BankBranchCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankBranchDTO;
+import com.hexaware.maverickbank.dto.BankBranchUpdateRequestDTO;
+import com.hexaware.maverickbank.service.interfaces.BankBranchService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/branches")
-@PreAuthorize("hasRole('ADMINISTRATOR')")
+@PreAuthorize("hasRole('CUSTOMER')")
 public class BankBranchController {
 
     @Autowired

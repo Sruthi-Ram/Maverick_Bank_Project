@@ -1,21 +1,43 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 24, 2025
+ * Description : This class implements the LoanApplicationService interface and handles
+ *               business logic related to loan application management, such as:
+ * 
+ *               - Creating new loan applications
+ *               - Retrieving loan applications by ID
+ *               - Listing all loan applications
+ *               - Updating loan applications (partial updates allowed)
+ *               - Deleting loan applications by ID
+ *               - Fetching loan applications by customer ID
+ * 
+ *               It includes validation logic to ensure loan application data integrity
+ *               and converts between DTOs and entity models.
+ * -----------------------------------------------------------------------------
+ */
 
-import com.hexaware.maverickBank.dto.LoanApplicationCreateRequestDTO;
-import com.hexaware.maverickBank.dto.LoanApplicationDTO;
-import com.hexaware.maverickBank.dto.LoanApplicationUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.entity.Loan;
-import com.hexaware.maverickBank.entity.LoanApplication;
-import com.hexaware.maverickBank.repository.ILoanApplicationRepository;
-import com.hexaware.maverickBank.service.interfaces.LoanApplicationService;
-import jakarta.validation.ValidationException;
+package com.hexaware.maverickbank.service.implementations;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.hexaware.maverickbank.dto.LoanApplicationCreateRequestDTO;
+import com.hexaware.maverickbank.dto.LoanApplicationDTO;
+import com.hexaware.maverickbank.dto.LoanApplicationUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Customer;
+import com.hexaware.maverickbank.dto.entity.Loan;
+import com.hexaware.maverickbank.dto.entity.LoanApplication;
+import com.hexaware.maverickbank.repository.ILoanApplicationRepository;
+import com.hexaware.maverickbank.service.interfaces.LoanApplicationService;
+
+import jakarta.validation.ValidationException;
 
 @Service
 public class LoanApplicationServiceImpl implements LoanApplicationService {

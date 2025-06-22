@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.entity;
+package com.hexaware.maverickbank.dto.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -35,11 +35,9 @@ public class Transaction {
 
     private LocalDateTime transactionDate;
 
-    private String description;
+ 
 
-    @ManyToOne
-    @JoinColumn(name = "beneficiary_id")
-    private Beneficiary beneficiary;
+    
     
     public Transaction() {
     }
@@ -85,34 +83,21 @@ public class Transaction {
         this.transactionDate = transactionDate;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
     
-    @JsonBackReference
-    public Beneficiary getBeneficiary() {
-        return beneficiary;
-    }
-
-    public void setBeneficiary(Beneficiary beneficiary) {
-        this.beneficiary = beneficiary;
-    }
+    
+   
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return Objects.equals(transactionId, that.transactionId) && Objects.equals(account, that.account) && Objects.equals(transactionType, that.transactionType) && Objects.equals(amount, that.amount) && Objects.equals(transactionDate, that.transactionDate) && Objects.equals(description, that.description) && Objects.equals(beneficiary, that.beneficiary);
+        return Objects.equals(transactionId, that.transactionId) && Objects.equals(account, that.account) && Objects.equals(transactionType, that.transactionType) && Objects.equals(amount, that.amount) && Objects.equals(transactionDate, that.transactionDate) ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionId, account, transactionType, amount, transactionDate, description, beneficiary);
+        return Objects.hash(transactionId, account, transactionType, amount, transactionDate);
     }
 
     @Override
@@ -123,8 +108,6 @@ public class Transaction {
                 ", transactionType='" + transactionType + '\'' +
                 ", amount=" + amount +
                 ", transactionDate=" + transactionDate +
-                ", description='" + description + '\'' +
-                ", beneficiary=" + (beneficiary != null ? beneficiary.getBeneficiaryId() : null) +
                 '}';
     }
 }

@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.entity;
+package com.hexaware.maverickbank.dto.entity;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -48,8 +48,6 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Account> accounts;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Beneficiary> beneficiaries;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LoanApplication> loanApplications;
@@ -138,14 +136,7 @@ public class Customer {
         this.accounts = accounts;
     }
 
-    @JsonManagedReference
-    public List<Beneficiary> getBeneficiaries() {
-        return beneficiaries;
-    }
-
-    public void setBeneficiaries(List<Beneficiary> beneficiaries) {
-        this.beneficiaries = beneficiaries;
-    }
+    
 
     public List<LoanApplication> getLoanApplications() {
         return loanApplications;

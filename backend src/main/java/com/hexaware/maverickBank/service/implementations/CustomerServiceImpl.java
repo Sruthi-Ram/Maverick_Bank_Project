@@ -1,4 +1,23 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 25, 2025
+ * Description : This class implements the CustomerServcie interface and handles
+ *               business logic related to customer management, such as:
+ * 
+ *               - Creating new customer records
+ *               - Retrieving customers by ID or User ID
+ *               - Listing all customers
+ *               - Updating customer details with authorization checks
+ *               - Deleting customers by ID
+ * 
+ *               It includes validation logic to ensure customer data integrity
+ *               and converts between DTOs and entity models.
+ * -----------------------------------------------------------------------------
+ */
+
+
+package com.hexaware.maverickbank.service.implementations;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -10,14 +29,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
-import com.hexaware.maverickBank.dto.CustomerDTO;
-import com.hexaware.maverickBank.dto.CustomerUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.ICustomerRepository;
-import com.hexaware.maverickBank.repository.IUserRepository;
-import com.hexaware.maverickBank.service.interfaces.CustomerServcie;
+import com.hexaware.maverickbank.dto.CustomerCreateRequestDTO;
+import com.hexaware.maverickbank.dto.CustomerDTO;
+import com.hexaware.maverickbank.dto.CustomerUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Customer;
+import com.hexaware.maverickbank.dto.entity.User;
+import com.hexaware.maverickbank.repository.ICustomerRepository;
+import com.hexaware.maverickbank.repository.IUserRepository;
+import com.hexaware.maverickbank.service.interfaces.CustomerServcie;
 
 import jakarta.validation.ValidationException;
 

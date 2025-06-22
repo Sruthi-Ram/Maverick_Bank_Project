@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.List;
 import java.util.Map;
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
-import com.hexaware.maverickBank.service.interfaces.BankEmployeeService;
+import com.hexaware.maverickbank.dto.BankEmployeeCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeUpdateRequestDTO;
+import com.hexaware.maverickbank.service.interfaces.BankEmployeeService;
 
 import jakarta.validation.Valid;
 

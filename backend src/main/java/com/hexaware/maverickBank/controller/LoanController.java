@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,21 +17,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.LoanCreateRequestDTO;
-import com.hexaware.maverickBank.dto.LoanDTO;
-import com.hexaware.maverickBank.dto.LoanUpdateRequestDTO;
-import com.hexaware.maverickBank.service.interfaces.LoanService;
+import com.hexaware.maverickbank.dto.LoanCreateRequestDTO;
+import com.hexaware.maverickbank.dto.LoanDTO;
+import com.hexaware.maverickbank.dto.LoanUpdateRequestDTO;
+import com.hexaware.maverickbank.service.interfaces.LoanService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/loans")
-@PreAuthorize("hasRole('BANK_EMPLOYEE')")
+
 public class LoanController {
 
     @Autowired
     private LoanService loanService;
-
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     @PostMapping("/createLoan")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<LoanDTO> createLoan(@Valid @RequestBody LoanCreateRequestDTO loanCreateRequestDTO) {
@@ -48,7 +48,8 @@ public class LoanController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/getAllLoans")
     public ResponseEntity<List<LoanDTO>> getAllLoans() {
         List<LoanDTO> loanDTOList = loanService.getAllLoans();

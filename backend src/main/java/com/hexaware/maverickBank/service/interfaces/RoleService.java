@@ -1,8 +1,8 @@
-package com.hexaware.maverickBank.service.interfaces;
+package com.hexaware.maverickbank.service.interfaces;
 
 import java.util.List;
 
-import com.hexaware.maverickBank.dto.RoleDTO;
+import com.hexaware.maverickbank.dto.RoleDTO;
 
 public interface RoleService {
     RoleDTO createRole(RoleDTO roleDTO);

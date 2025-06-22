@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.exception;
+package com.hexaware.maverickbank.exception;
 
 import java.util.NoSuchElementException;
 

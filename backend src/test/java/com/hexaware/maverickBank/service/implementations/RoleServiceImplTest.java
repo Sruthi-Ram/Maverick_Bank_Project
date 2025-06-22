@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.service.implementations;
+package com.hexaware.maverickbank.service.implementations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -20,9 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.hexaware.maverickBank.dto.RoleDTO;
-import com.hexaware.maverickBank.entity.Role;
-import com.hexaware.maverickBank.repository.IRoleRepository;
+import com.hexaware.maverickbank.dto.RoleDTO;
+import com.hexaware.maverickbank.dto.entity.Role;
+import com.hexaware.maverickbank.repository.IRoleRepository;
 
 import jakarta.validation.ValidationException;
 

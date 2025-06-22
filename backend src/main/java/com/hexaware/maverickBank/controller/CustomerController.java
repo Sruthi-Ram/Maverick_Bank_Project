@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,23 +20,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
-import com.hexaware.maverickBank.dto.CustomerDTO;
-import com.hexaware.maverickBank.dto.CustomerUpdateRequestDTO;
-import com.hexaware.maverickBank.service.interfaces.CustomerServcie;
-import org.springframework.security.core.Authentication;
+import com.hexaware.maverickbank.dto.CustomerCreateRequestDTO;
+import com.hexaware.maverickbank.dto.CustomerDTO;
+import com.hexaware.maverickbank.dto.CustomerUpdateRequestDTO;
+import com.hexaware.maverickbank.service.interfaces.CustomerServcie;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/customers")
-@PreAuthorize("hasRole('CUSTOMER')")
 public class CustomerController {
 
     @Autowired
     private CustomerServcie customerService;
 
     @PostMapping("/createCustomer")
+    @PreAuthorize("hasRole('CUSTOMER')")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerCreateRequestDTO customerCreateRequestDTO) {
         CustomerDTO createdCustomer = customerService.createCustomer(customerCreateRequestDTO);
@@ -43,6 +43,7 @@ public class CustomerController {
     }
 
     @GetMapping("/getCustomerById/{customerId}")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long customerId) {
         try {
             CustomerDTO customerDTO = customerService.getCustomerById(customerId);
@@ -53,6 +54,7 @@ public class CustomerController {
     }
 
     @GetMapping("/getAllCustomers")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
         List<CustomerDTO> customerDTOList = customerService.getAllCustomers();
         return new ResponseEntity<>(customerDTOList, HttpStatus.OK);
@@ -72,6 +74,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/deleteCustomer/{customerId}")
+    @PreAuthorize("hasRole('BANK_EMPLOYEE') or hasRole('ADMINISTRATOR')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         try {
@@ -83,6 +86,7 @@ public class CustomerController {
     }
 
     @GetMapping("/getCustomerByUserId/{userId}")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('BANK_EMPLOYEE')")
     public ResponseEntity<CustomerDTO> getCustomerByUserId(@PathVariable Long userId) {
         try {
             CustomerDTO customerDTO = customerService.getCustomerByUserId(userId);

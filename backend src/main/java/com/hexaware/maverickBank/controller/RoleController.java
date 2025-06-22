@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.RoleDTO;
-import com.hexaware.maverickBank.service.interfaces.RoleService;
+import com.hexaware.maverickbank.dto.RoleDTO;
+import com.hexaware.maverickbank.service.interfaces.RoleService;
 
 import jakarta.validation.Valid;
 

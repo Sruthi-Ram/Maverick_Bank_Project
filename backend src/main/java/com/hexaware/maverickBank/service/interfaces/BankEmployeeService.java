@@ -1,10 +1,10 @@
-package com.hexaware.maverickBank.service.interfaces;
+package com.hexaware.maverickbank.service.interfaces;
 
 import java.util.List;
 
-import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeUpdateRequestDTO;
 
 public interface BankEmployeeService {
     BankEmployeeDTO createBankEmployee(BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO);

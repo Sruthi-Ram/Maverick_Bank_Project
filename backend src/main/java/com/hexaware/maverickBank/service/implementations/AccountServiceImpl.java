@@ -1,4 +1,29 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 27, 2025
+ * Description : This class implements the AccountService interface and handles
+ *               the business logic related to bank account operations, including:
+ * 
+ *               - Creating new accounts with validation for customer and branch existence,
+ *                 and generating unique account numbers
+ *               - Retrieving accounts by ID or account number
+ *               - Listing all accounts or accounts for a specific customer
+ *               - Updating account details such as account type, balance, and IFSC code
+ *               - Deleting accounts by ID
+ * 
+ *               - Managing transactions including deposits, withdrawals, and transfers
+ *                 with validation of amounts and sufficient balances
+ *               - Retrieving transactions for accounts, optionally filtered by date range
+ * 
+ *               The service performs validation checks, handles exceptions like
+ *               insufficient balance and invalid amounts, and manages transactional
+ *               integrity using Spring's @Transactional annotation.
+ * -----------------------------------------------------------------------------
+ */
+
+
+package com.hexaware.maverickbank.service.implementations;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,20 +36,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hexaware.maverickBank.dto.AccountCreateRequestDTO;
-import com.hexaware.maverickBank.dto.AccountDTO;
-import com.hexaware.maverickBank.dto.AccountUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Account;
-import com.hexaware.maverickBank.entity.BankBranch;
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.entity.Transaction;
-import com.hexaware.maverickBank.exception.InsufficientBalanceException;
-import com.hexaware.maverickBank.exception.InvalidTransferAmountException;
-import com.hexaware.maverickBank.repository.IAccountRepository;
-import com.hexaware.maverickBank.repository.IBankBranchRepository;
-import com.hexaware.maverickBank.repository.ICustomerRepository;
-import com.hexaware.maverickBank.repository.ITransactionRepository;
-import com.hexaware.maverickBank.service.interfaces.AccountService;
+import com.hexaware.maverickbank.dto.AccountCreateRequestDTO;
+import com.hexaware.maverickbank.dto.AccountDTO;
+import com.hexaware.maverickbank.dto.AccountUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Account;
+import com.hexaware.maverickbank.dto.entity.BankBranch;
+import com.hexaware.maverickbank.dto.entity.Customer;
+import com.hexaware.maverickbank.dto.entity.Transaction;
+import com.hexaware.maverickbank.exception.InsufficientBalanceException;
+import com.hexaware.maverickbank.exception.InvalidTransferAmountException;
+import com.hexaware.maverickbank.repository.IAccountRepository;
+import com.hexaware.maverickbank.repository.IBankBranchRepository;
+import com.hexaware.maverickbank.repository.ICustomerRepository;
+import com.hexaware.maverickbank.repository.ITransactionRepository;
+import com.hexaware.maverickbank.service.interfaces.AccountService;
 
 import jakarta.validation.ValidationException;
 
@@ -43,6 +68,7 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private IBankBranchRepository bankBranchRepository;
 
+    // Validates the fields in AccountDTO before processing
     private void validateAccount(AccountDTO accountDTO) {
         if (accountDTO.getCustomerId() == null || customerRepository.findById(accountDTO.getCustomerId()).isEmpty()) {
             throw new ValidationException("Customer ID is required and must exist");
@@ -58,22 +84,23 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    // Generates a unique 16-digit account number
     private String generateAccountNumber() {
-        // Simple account number generation logic (you might need something more sophisticated)
         return UUID.randomUUID().toString().replace("-", "").substring(0, 16);
     }
 
+    // Creates a new account
     @Override
     public AccountDTO createAccount(AccountCreateRequestDTO accountCreateRequestDTO) {
         validateAccount(convertCreateRequestDTOtoDTO(accountCreateRequestDTO));
         Account account = convertCreateRequestDTOtoEntity(accountCreateRequestDTO);
         account.setDateOpened(LocalDateTime.now());
         account.setAccountNumber(generateAccountNumber());
-        // You might want to set IFSC code based on the branch
         Account savedAccount = accountRepository.save(account);
         return convertEntityToDTO(savedAccount);
     }
 
+    // Retrieves an account by its ID
     @Override
     public AccountDTO getAccountById(Long accountId) {
         Account account = accountRepository.findById(accountId)
@@ -81,6 +108,7 @@ public class AccountServiceImpl implements AccountService {
         return convertEntityToDTO(account);
     }
 
+    // Retrieves all accounts
     @Override
     public List<AccountDTO> getAllAccounts() {
         return accountRepository.findAll().stream()
@@ -88,6 +116,7 @@ public class AccountServiceImpl implements AccountService {
                 .collect(Collectors.toList());
     }
 
+    // Updates fields of an existing account
     @Override
     public AccountDTO updateAccount(Long accountId, AccountUpdateRequestDTO accountUpdateRequestDTO) {
         Account existingAccount = accountRepository.findById(accountId)
@@ -106,15 +135,16 @@ public class AccountServiceImpl implements AccountService {
         return convertEntityToDTO(updatedAccount);
     }
 
+    // Deletes an account by its ID
     @Override
     public void deleteAccount(Long accountId) {
         if (!accountRepository.existsById(accountId)) {
             throw new NoSuchElementException("Account not found with ID: " + accountId);
         }
-        
         accountRepository.deleteById(accountId);
     }
 
+    // Retrieves all accounts for a given customer
     @Override
     public List<AccountDTO> getAccountsByCustomerId(Long customerId) {
         getCustomerByIdForAccount(customerId); 
@@ -127,6 +157,7 @@ public class AccountServiceImpl implements AccountService {
                 .collect(Collectors.toList());
     }
 
+    // Retrieves an account by account number
     @Override
     public AccountDTO getAccountByAccountNumber(String accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber);
@@ -136,12 +167,14 @@ public class AccountServiceImpl implements AccountService {
         return convertEntityToDTO(account);
     }
 
+    // Retrieves all transactions for a specific account
     @Override
     public List<Transaction> getTransactionsForAccount(Long accountId) {
         getAccountById(accountId); 
         return transactionRepository.findByAccount_AccountIdOrderByTransactionDateDesc(accountId);
     }
 
+    // Retrieves transactions for an account within a specific date range
     @Override
     public List<Transaction> getTransactionsForAccountByDateRange(Long accountId, LocalDateTime startDate, LocalDateTime endDate) {
         getAccountById(accountId); 
@@ -152,13 +185,13 @@ public class AccountServiceImpl implements AccountService {
         return transactions;
     }
 
+    // Deposits money into an account
     @Override
     @Transactional
     public void deposit(Account account, BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ValidationException("Deposit amount must be positive");
         }
-      
         account.setBalance(account.getBalance().add(amount));
         accountRepository.save(account);
         Transaction transaction = new Transaction();
@@ -169,6 +202,7 @@ public class AccountServiceImpl implements AccountService {
         transactionRepository.save(transaction);
     }
 
+    // Withdraws money from an account
     @Override
     @Transactional
     public void withdraw(Account account, BigDecimal amount) {
@@ -178,7 +212,6 @@ public class AccountServiceImpl implements AccountService {
         if (account.getBalance().compareTo(amount) < 0) {
             throw new InsufficientBalanceException("Insufficient balance in the account");
         }
-     
         account.setBalance(account.getBalance().subtract(amount));
         accountRepository.save(account);
         Transaction transaction = new Transaction();
@@ -189,6 +222,7 @@ public class AccountServiceImpl implements AccountService {
         transactionRepository.save(transaction);
     }
 
+    // Transfers money between two accounts
     @Override
     @Transactional
     public void transfer(Account fromAccount, Account toAccount, BigDecimal amount) {
@@ -201,30 +235,31 @@ public class AccountServiceImpl implements AccountService {
         if (fromAccount.getBalance().compareTo(amount) < 0) {
             throw new InsufficientBalanceException("Insufficient balance in the source account");
         }
-       
         withdraw(fromAccount, amount);
         deposit(toAccount, amount);
         Transaction transaction = new Transaction();
         transaction.setAccount(fromAccount);
         transaction.setTransactionType("Transfer");
         transaction.setAmount(amount);
-        transaction.setDescription("Transfer to Account: " + toAccount.getAccountNumber());
+        //transaction.setDescription("Transfer to Account: " + toAccount.getAccountNumber());
         transaction.setTransactionDate(LocalDateTime.now());
         transactionRepository.save(transaction);
         Transaction receiveTransaction = new Transaction();
         receiveTransaction.setAccount(toAccount);
         receiveTransaction.setTransactionType("Transfer");
         receiveTransaction.setAmount(amount);
-        receiveTransaction.setDescription("Transfer from Account: " + fromAccount.getAccountNumber());
+        //receiveTransaction.setDescription("Transfer from Account: " + fromAccount.getAccountNumber());
         receiveTransaction.setTransactionDate(LocalDateTime.now());
         transactionRepository.save(receiveTransaction);
     }
 
+    // Helper to check if customer exists
     private void getCustomerByIdForAccount(Long customerId) {
         customerRepository.findById(customerId)
                 .orElseThrow(() -> new NoSuchElementException("Customer not found with ID: " + customerId));
     }
 
+    // Converts Account entity to DTO
     private AccountDTO convertEntityToDTO(Account account) {
         AccountDTO dto = new AccountDTO();
         dto.setAccountId(account.getAccountId());
@@ -242,6 +277,7 @@ public class AccountServiceImpl implements AccountService {
         return dto;
     }
 
+    // Converts create request DTO to entity
     private Account convertCreateRequestDTOtoEntity(AccountCreateRequestDTO createRequestDTO) {
         Account account = new Account();
         Customer customer = new Customer();
@@ -256,6 +292,7 @@ public class AccountServiceImpl implements AccountService {
         return account;
     }
 
+    // Converts create request DTO to DTO
     private AccountDTO convertCreateRequestDTOtoDTO(AccountCreateRequestDTO createRequestDTO) {
         AccountDTO dto = new AccountDTO();
         dto.setCustomerId(createRequestDTO.getCustomerId());

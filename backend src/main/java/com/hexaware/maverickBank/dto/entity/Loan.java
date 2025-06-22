@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.entity;
+package com.hexaware.maverickbank.dto.entity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -34,9 +34,9 @@ public class Loan {
     @Column(nullable = false)
     private Integer tenureMonths;
 
-    private BigDecimal amountPaid;
+    //private BigDecimal amountPaid;
 
-    private String status; // e.g., Approved, Disbursed, Repaid, Pending
+    //private String status; // e.g., Approved, Disbursed, Repaid, Pending
 
     @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LoanApplication> loanApplications;
@@ -49,8 +49,8 @@ public class Loan {
         this.principalAmount = principalAmount;
         this.interestRate = interestRate;
         this.tenureMonths = tenureMonths;
-        this.amountPaid = amountPaid;
-        this.status = status;
+        //this.amountPaid = amountPaid;
+        //this.status = status;
         this.loanApplications = loanApplications;
     }
 
@@ -94,7 +94,7 @@ public class Loan {
         this.tenureMonths = tenureMonths;
     }
 
-    public BigDecimal getAmountPaid() {
+    /*public BigDecimal getAmountPaid() {
         return amountPaid;
     }
 
@@ -108,7 +108,7 @@ public class Loan {
 
     public void setStatus(String status) {
         this.status = status;
-    }
+    }*/
 
     public List<LoanApplication> getLoanApplications() {
         return loanApplications;
@@ -123,12 +123,12 @@ public class Loan {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Loan loan = (Loan) o;
-        return Objects.equals(loanId, loan.loanId) && Objects.equals(loanType, loan.loanType) && Objects.equals(principalAmount, loan.principalAmount) && Objects.equals(interestRate, loan.interestRate) && Objects.equals(tenureMonths, loan.tenureMonths) && Objects.equals(amountPaid, loan.amountPaid) && Objects.equals(status, loan.status);
+        return Objects.equals(loanId, loan.loanId) && Objects.equals(loanType, loan.loanType) && Objects.equals(principalAmount, loan.principalAmount) && Objects.equals(interestRate, loan.interestRate) && Objects.equals(tenureMonths, loan.tenureMonths);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(loanId, loanType, principalAmount, interestRate, tenureMonths, amountPaid, status);
+        return Objects.hash(loanId, loanType, principalAmount, interestRate, tenureMonths);
     }
 
     @Override
@@ -138,9 +138,6 @@ public class Loan {
                 ", loanType='" + loanType + '\'' +
                 ", principalAmount=" + principalAmount +
                 ", interestRate=" + interestRate +
-                ", tenureMonths=" + tenureMonths +
-                ", amountPaid=" + amountPaid +
-                ", status='" + status + '\'' +
-                '}';
+                ", tenureMonths=" + tenureMonths  ;
     }
 }

@@ -1,13 +1,13 @@
-package com.hexaware.maverickBank.service.interfaces;
+package com.hexaware.maverickbank.service.interfaces;
 
 import java.util.List;
 
-import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
-import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
-import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.UserDTO;
+import com.hexaware.maverickbank.dto.UserRegistrationRequestDTO;
+import com.hexaware.maverickbank.dto.UserUpdateRequestDTO;
 
 public interface AdminService {
 	UserDTO createUser(UserRegistrationRequestDTO userCreateRequestDTO);

@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.dto;
+package com.hexaware.maverickbank.dto;
 
 public class UserDTO {
 

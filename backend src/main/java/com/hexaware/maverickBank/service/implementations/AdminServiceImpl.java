@@ -1,4 +1,34 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 22, 2025
+ * Description : This class implements the AdminService interface and manages
+ *               the business logic related to user and bank employee management, including:
+ * 
+ *               User Management:
+ *               - Creating users with encoded passwords and assigned roles
+ *               - Retrieving users by ID
+ *               - Listing all users
+ *               - Updating user details including email, password, and role
+ *               - Deleting users by ID
+ * 
+ *               Bank Employee Management:
+ *               - Creating bank employees linked to users
+ *               - Retrieving bank employees by employee ID
+ *               - Listing all bank employees
+ *               - Updating bank employee details
+ *               - Deleting bank employees by ID
+ * 
+ *               The class performs necessary validations such as role and user existence,
+ *               handles entity-to-DTO and DTO-to-entity conversions,
+ *               and logs key actions for traceability.
+ * -----------------------------------------------------------------------------
+ */
+
+
+package com.hexaware.maverickbank.service.implementations;
+
+
 
 import java.util.List;
 import java.util.Optional;
@@ -9,19 +39,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
-import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
-import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.BankEmployee;
-import com.hexaware.maverickBank.entity.Role;
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.IBankEmployeeRepository;
-import com.hexaware.maverickBank.repository.IRoleRepository;
-import com.hexaware.maverickBank.repository.IUserRepository;
-import com.hexaware.maverickBank.service.interfaces.AdminService;
+import com.hexaware.maverickbank.dto.BankEmployeeCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.UserDTO;
+import com.hexaware.maverickbank.dto.UserRegistrationRequestDTO;
+import com.hexaware.maverickbank.dto.UserUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.BankEmployee;
+import com.hexaware.maverickbank.dto.entity.User;
+import com.hexaware.maverickbank.repository.IBankEmployeeRepository;
+import com.hexaware.maverickbank.repository.IRoleRepository;
+import com.hexaware.maverickbank.repository.IUserRepository;
+import com.hexaware.maverickbank.service.interfaces.AdminService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,16 +76,19 @@ public class AdminServiceImpl implements AdminService {
 	public UserDTO createUser(UserRegistrationRequestDTO userRegistrationRequestDTO) {
 		log.info("Creating user with username: {}", userRegistrationRequestDTO.getUsername());
 		User user = new User();
+		// Copy fields from DTO to User entity
 		BeanUtils.copyProperties(userRegistrationRequestDTO, user);
+		// Encode password before saving
 		user.setPassword(passwordEncoder.encode(userRegistrationRequestDTO.getPassword()));
 
-		// Fetch the Role entity based on the roleId from the request
+		// Set the role to the user
 		roleRepository.findById(userRegistrationRequestDTO.getRoleId()).ifPresentOrElse(user::setRole, () -> {
 			throw new RuntimeException("Role not found with ID: " + userRegistrationRequestDTO.getRoleId());
 		});
 
 		User savedUser = userRepository.save(user);
 		UserDTO userDTO = new UserDTO();
+		// Copy back properties from saved user to DTO
 		BeanUtils.copyProperties(savedUser, userDTO);
 		if (savedUser.getRole() != null) {
 			userDTO.setRoleId(savedUser.getRole().getRoleId());
@@ -71,6 +103,7 @@ public class AdminServiceImpl implements AdminService {
 		Optional<User> userOptional = userRepository.findById(userId);
 		if (userOptional.isPresent()) {
 			UserDTO userDTO = new UserDTO();
+			// Convert entity to DTO
 			BeanUtils.copyProperties(userOptional.get(), userDTO);
 			if (userOptional.get().getRole() != null) {
 				userDTO.setRoleId(userOptional.get().getRole().getRoleId());
@@ -89,6 +122,7 @@ public class AdminServiceImpl implements AdminService {
 		List<User> users = userRepository.findAll();
 		List<UserDTO> userDTOs = users.stream().map(user -> {
 			UserDTO userDTO = new UserDTO();
+			// Convert each User entity to DTO
 			BeanUtils.copyProperties(user, userDTO);
 			if (user.getRole() != null) {
 				userDTO.setRoleId(user.getRole().getRoleId());
@@ -105,12 +139,15 @@ public class AdminServiceImpl implements AdminService {
 		Optional<User> userOptional = userRepository.findById(userId);
 		if (userOptional.isPresent()) {
 			User user = userOptional.get();
+			// Update email
 			user.setEmail(userUpdateRequestDTO.getEmail());
 
+			// Update password if provided
 			if (userUpdateRequestDTO.getPassword() != null) {
 				user.setPassword(passwordEncoder.encode(userUpdateRequestDTO.getPassword()));
 			}
 
+			// Update role if provided
 			if (userUpdateRequestDTO.getRoleId() != null) {
 				roleRepository.findById(userUpdateRequestDTO.getRoleId()).ifPresentOrElse(user::setRole, () -> {
 					log.warn("Role not found with ID: {}", userUpdateRequestDTO.getRoleId());
@@ -138,15 +175,17 @@ public class AdminServiceImpl implements AdminService {
 		userRepository.deleteById(userId);
 		log.info("User with ID {} deleted successfully", userId);
 	}
+
 	// Bank Employee Management
 
 	@Override
 	public BankEmployeeDTO createBankEmployee(BankEmployeeCreateRequestDTO bankEmployeeCreateRequestDTO) {
 		log.info("Creating bank employee with user ID: {}", bankEmployeeCreateRequestDTO.getUserId());
 		BankEmployee bankEmployee = new BankEmployee();
+		// Copy request DTO to entity
 		BeanUtils.copyProperties(bankEmployeeCreateRequestDTO, bankEmployee);
 
-		// Fetch the User entity based on the userId from the request
+		// Set User object using userId
 		Optional<User> userOptional = userRepository.findById(bankEmployeeCreateRequestDTO.getUserId());
 		userOptional.ifPresentOrElse(bankEmployee::setUserId, () -> {
 			throw new RuntimeException("User not found with ID: " + bankEmployeeCreateRequestDTO.getUserId());
@@ -156,7 +195,7 @@ public class AdminServiceImpl implements AdminService {
 		BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
 		BeanUtils.copyProperties(savedEmployee, bankEmployeeDTO);
 
-		// Manually set the userId in the DTO as BeanUtils might not copy it automatically from the User object
+		// Set userId in DTO manually
 		if (savedEmployee.getUserId() != null) {
 			bankEmployeeDTO.setUserId(savedEmployee.getUserId().getUserId());
 		}
@@ -206,13 +245,14 @@ public class AdminServiceImpl implements AdminService {
 		Optional<BankEmployee> bankEmployeeOptional = bankEmployeeRepository.findById(employeeId);
 		if (bankEmployeeOptional.isPresent()) {
 			BankEmployee bankEmployee = bankEmployeeOptional.get();
+			// Copy updates from DTO
 			BeanUtils.copyProperties(bankEmployeeUpdateRequestDTO, bankEmployee);
 			bankEmployee.setEmployeeId(employeeId);
 			BankEmployee updatedEmployee = bankEmployeeRepository.save(bankEmployee);
 			BankEmployeeDTO bankEmployeeDTO = new BankEmployeeDTO();
 			BeanUtils.copyProperties(updatedEmployee, bankEmployeeDTO);
 
-			// Manually set the branchId in the DTO
+			// Set branch and user IDs
 			if (updatedEmployee.getBranch() != null) {
 				bankEmployeeDTO.setBranchId(updatedEmployee.getBranch().getBranchId());
 			}

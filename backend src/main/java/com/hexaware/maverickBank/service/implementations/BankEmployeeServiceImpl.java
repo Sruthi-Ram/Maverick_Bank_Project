@@ -1,4 +1,24 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 27, 2025
+ * Description : This class implements the BankEmployeeService interface and handles
+ *               business logic related to bank employees, including:
+ * 
+ *               - Creating bank employees linked to users and bank branches with validation
+ *               - Retrieving bank employees by employee ID or user ID
+ *               - Listing all bank employees
+ *               - Updating bank employee details with validation on branch existence
+ *               - Deleting bank employees by ID
+ * 
+ *               It ensures data integrity by validating employee details and verifying
+ *               existence of associated users and bank branches before performing
+ *               operations. It also converts between entity and DTO representations.
+ * -----------------------------------------------------------------------------
+ */
+
+
+package com.hexaware.maverickbank.service.implementations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,16 +27,16 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.BankBranch;
-import com.hexaware.maverickBank.entity.BankEmployee;
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.IBankEmployeeRepository;
-import com.hexaware.maverickBank.service.interfaces.BankBranchService;
-import com.hexaware.maverickBank.service.interfaces.BankEmployeeService;
-import com.hexaware.maverickBank.service.interfaces.UserService;
+import com.hexaware.maverickbank.dto.BankEmployeeCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.BankBranch;
+import com.hexaware.maverickbank.dto.entity.BankEmployee;
+import com.hexaware.maverickbank.dto.entity.User;
+import com.hexaware.maverickbank.repository.IBankEmployeeRepository;
+import com.hexaware.maverickbank.service.interfaces.BankBranchService;
+import com.hexaware.maverickbank.service.interfaces.BankEmployeeService;
+import com.hexaware.maverickbank.service.interfaces.UserService;
 
 import jakarta.validation.ValidationException;
 

@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.service.implementations;
+package com.hexaware.maverickbank.service.implementations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,15 +25,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.hexaware.maverickBank.dto.LoginRequestDTO;
-import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
-import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Role;
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.IRoleRepository;
-import com.hexaware.maverickBank.repository.IUserRepository;
-import com.hexaware.maverickBank.security.JwtService;
+import com.hexaware.maverickbank.dto.LoginRequestDTO;
+import com.hexaware.maverickbank.dto.UserDTO;
+import com.hexaware.maverickbank.dto.UserRegistrationRequestDTO;
+import com.hexaware.maverickbank.dto.UserUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Role;
+import com.hexaware.maverickbank.dto.entity.User;
+import com.hexaware.maverickbank.repository.IRoleRepository;
+import com.hexaware.maverickbank.repository.IUserRepository;
+import com.hexaware.maverickbank.security.JwtService;
 
 import jakarta.validation.ValidationException;
 

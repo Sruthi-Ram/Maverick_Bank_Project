@@ -1,11 +1,11 @@
-package com.hexaware.maverickBank.repository;
+package com.hexaware.maverickbank.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.hexaware.maverickBank.entity.User;
+import com.hexaware.maverickbank.dto.entity.User;
 @Repository
 public interface IUserRepository extends JpaRepository<User, Long> {
     User findByUsername(String username);

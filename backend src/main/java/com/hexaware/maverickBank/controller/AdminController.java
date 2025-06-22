@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.List;
 
@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.BankEmployeeCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeDTO;
-import com.hexaware.maverickBank.dto.BankEmployeeUpdateRequestDTO;
-import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
-import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
-import com.hexaware.maverickBank.service.interfaces.AdminService;
+import com.hexaware.maverickbank.dto.BankEmployeeCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeDTO;
+import com.hexaware.maverickbank.dto.BankEmployeeUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.UserDTO;
+import com.hexaware.maverickbank.dto.UserRegistrationRequestDTO;
+import com.hexaware.maverickbank.dto.UserUpdateRequestDTO;
+import com.hexaware.maverickbank.service.interfaces.AdminService;
 
 import lombok.extern.slf4j.Slf4j;
 

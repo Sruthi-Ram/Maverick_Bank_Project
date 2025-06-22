@@ -1,4 +1,24 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 28, 2025
+ * Description : This class implements the BankBranchService interface and manages
+ *               the business logic related to bank branches, including:
+ * 
+ *               - Creating bank branches with validation on name, address, and IFSC prefix
+ *               - Retrieving bank branches by ID, name, or IFSC prefix
+ *               - Listing all bank branches
+ *               - Updating bank branch details with validation on unique name and IFSC prefix
+ *               - Deleting bank branches by ID
+ * 
+ *               The class validates the IFSC prefix format (exactly 4 alphabetic characters)
+ *               and prevents duplicate entries by checking existing names and IFSC prefixes.
+ *               It also handles entity-to-DTO and DTO-to-entity conversions.
+ * -----------------------------------------------------------------------------
+ */
+
+
+package com.hexaware.maverickbank.service.implementations;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -9,12 +29,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hexaware.maverickBank.dto.BankBranchCreateRequestDTO;
-import com.hexaware.maverickBank.dto.BankBranchDTO;
-import com.hexaware.maverickBank.dto.BankBranchUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.BankBranch;
-import com.hexaware.maverickBank.repository.IBankBranchRepository;
-import com.hexaware.maverickBank.service.interfaces.BankBranchService;
+import com.hexaware.maverickbank.dto.BankBranchCreateRequestDTO;
+import com.hexaware.maverickbank.dto.BankBranchDTO;
+import com.hexaware.maverickbank.dto.BankBranchUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.BankBranch;
+import com.hexaware.maverickbank.repository.IBankBranchRepository;
+import com.hexaware.maverickbank.service.interfaces.BankBranchService;
 
 import jakarta.validation.ValidationException;
 

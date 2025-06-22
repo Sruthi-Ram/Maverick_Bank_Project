@@ -1,9 +1,10 @@
-package com.hexaware.maverickBank.service.interfaces;
+package com.hexaware.maverickbank.service.interfaces;
 
-import com.hexaware.maverickBank.dto.LoanCreateRequestDTO;
-import com.hexaware.maverickBank.dto.LoanDTO;
-import com.hexaware.maverickBank.dto.LoanUpdateRequestDTO;
 import java.util.List;
+
+import com.hexaware.maverickbank.dto.LoanCreateRequestDTO;
+import com.hexaware.maverickbank.dto.LoanDTO;
+import com.hexaware.maverickbank.dto.LoanUpdateRequestDTO;
 
 public interface LoanService {
     LoanDTO createLoan(LoanCreateRequestDTO loanCreateRequestDTO);

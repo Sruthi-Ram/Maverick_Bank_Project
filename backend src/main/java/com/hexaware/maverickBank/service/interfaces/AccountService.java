@@ -1,14 +1,14 @@
-package com.hexaware.maverickBank.service.interfaces;
+package com.hexaware.maverickbank.service.interfaces;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.hexaware.maverickBank.dto.AccountCreateRequestDTO;
-import com.hexaware.maverickBank.dto.AccountDTO;
-import com.hexaware.maverickBank.dto.AccountUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Account;
-import com.hexaware.maverickBank.entity.Transaction;
+import com.hexaware.maverickbank.dto.AccountCreateRequestDTO;
+import com.hexaware.maverickbank.dto.AccountDTO;
+import com.hexaware.maverickbank.dto.AccountUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Account;
+import com.hexaware.maverickbank.dto.entity.Transaction;
 
 public interface AccountService {
     AccountDTO createAccount(AccountCreateRequestDTO accountCreateRequestDTO);

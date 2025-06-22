@@ -1,10 +1,10 @@
-package com.hexaware.maverickBank.service.interfaces;
+package com.hexaware.maverickbank.service.interfaces;
 
-import com.hexaware.maverickBank.dto.LoginRequestDTO;
-import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
-import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.User;
+import com.hexaware.maverickbank.dto.LoginRequestDTO;
+import com.hexaware.maverickbank.dto.UserDTO;
+import com.hexaware.maverickbank.dto.UserRegistrationRequestDTO;
+import com.hexaware.maverickbank.dto.UserUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.User;
 
 public interface UserService {
     UserDTO registerUser(UserRegistrationRequestDTO registrationRequestDTO); // Use DTO for registration request

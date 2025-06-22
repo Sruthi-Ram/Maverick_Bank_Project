@@ -1,18 +1,31 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 21, 2025
+ * Description : This class implements the TransactionService interface and handles 
+ *               the business logic for transaction operations including creation, 
+ *               retrieval by ID, and deletion of transactions.
+ * 
+ *               It also includes utility methods for converting between DTO and 
+ *               entity objects for transactions, and handles interactions with 
+ *               the database through appropriate repositories.
+ * -----------------------------------------------------------------------------
+ */
 
+package com.hexaware.maverickbank.service.implementations;
+
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hexaware.maverickBank.dto.TransactionDTO;
-import com.hexaware.maverickBank.entity.Account;
-import com.hexaware.maverickBank.entity.Beneficiary;
-import com.hexaware.maverickBank.entity.Transaction;
-import com.hexaware.maverickBank.repository.IAccountRepository;
-import com.hexaware.maverickBank.repository.IBeneficiaryRepository;
-import com.hexaware.maverickBank.repository.ITransactionRepository;
-import com.hexaware.maverickBank.service.interfaces.TransactionService;
+import com.hexaware.maverickbank.dto.TransactionDTO;
+import com.hexaware.maverickbank.dto.entity.Account;
+import com.hexaware.maverickbank.dto.entity.Transaction;
+import com.hexaware.maverickbank.repository.IAccountRepository;
+import com.hexaware.maverickbank.repository.ITransactionRepository;
+import com.hexaware.maverickbank.service.interfaces.TransactionService;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -23,8 +36,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     private IAccountRepository accountRepository;
 
-    @Autowired
-    private IBeneficiaryRepository beneficiaryRepository;
+ 
 
     @Override
     public TransactionDTO createTransaction(TransactionDTO transactionDTO) {
@@ -57,12 +69,19 @@ public class TransactionServiceImpl implements TransactionService {
         dto.setTransactionType(transaction.getTransactionType());
         dto.setAmount(transaction.getAmount());
         dto.setTransactionDate(transaction.getTransactionDate());
-        dto.setDescription(transaction.getDescription());
-        if (transaction.getBeneficiary() != null) {
-            dto.setBeneficiaryId(transaction.getBeneficiary().getBeneficiaryId());
-        }
+        //dto.setDescription(transaction.getDescription());
+        
         return dto;
     }
+    
+    @Override
+    public List<TransactionDTO> getAllTransactions() {
+        List<Transaction> transactions = transactionRepository.findAll();
+        return transactions.stream()
+                           .map(this::convertEntityToDTO)
+                           .toList();
+    }
+
 
     private Transaction convertDTOtoEntity(TransactionDTO dto) {
         Transaction transaction = new Transaction();
@@ -75,12 +94,11 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setTransactionType(dto.getTransactionType());
         transaction.setAmount(dto.getAmount());
         transaction.setTransactionDate(dto.getTransactionDate());
-        transaction.setDescription(dto.getDescription());
-        if (dto.getBeneficiaryId() != null) {
-            Beneficiary beneficiary = beneficiaryRepository.findById(dto.getBeneficiaryId())
-                    .orElseThrow(() -> new NoSuchElementException("Beneficiary not found with ID: " + dto.getBeneficiaryId()));
-            transaction.setBeneficiary(beneficiary);
-        }
+        //transaction.setDescription(dto.getDescription());
+        
+                    
+           
+        
         return transaction;
     }
 }

@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.security;
+package com.hexaware.maverickbank.security;
 
 import java.io.IOException;
 

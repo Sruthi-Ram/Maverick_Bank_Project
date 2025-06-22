@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.NoSuchElementException;
 
@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,15 +21,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.LoginRequestDTO;
-import com.hexaware.maverickBank.dto.UserDTO;
-import com.hexaware.maverickBank.dto.UserRegistrationRequestDTO;
-import com.hexaware.maverickBank.dto.UserUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.IUserRepository;
-import com.hexaware.maverickBank.security.JwtService;
-import com.hexaware.maverickBank.service.implementations.UserDetailsServiceImpl;
-import com.hexaware.maverickBank.service.interfaces.UserService;
+import com.hexaware.maverickbank.dto.LoginRequestDTO;
+import com.hexaware.maverickbank.dto.UserDTO;
+import com.hexaware.maverickbank.dto.UserRegistrationRequestDTO;
+import com.hexaware.maverickbank.dto.UserUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.User;
+import com.hexaware.maverickbank.repository.IUserRepository;
+import com.hexaware.maverickbank.security.JwtService;
+import com.hexaware.maverickbank.service.implementations.UserDetailsServiceImpl;
+import com.hexaware.maverickbank.service.interfaces.UserService;
 
 import jakarta.validation.Valid;
 
@@ -51,7 +52,6 @@ public class UserController {
     @Autowired
     private IUserRepository userRepository;
 
-  
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserDTO> registerUser(@Valid @RequestBody UserRegistrationRequestDTO registrationRequestDTO) {
@@ -59,11 +59,14 @@ public class UserController {
         return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
     }
 
+    // Corrected AuthResponse record with no explicit constructor
+    public record AuthResponse(String token, Long userId, Long roleId) {}
+
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<AuthResponse> loginUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                    new UsernamePasswordAuthenticationToken(
                             loginRequestDTO.getUsername(),
                             loginRequestDTO.getPassword()
                     )
@@ -71,22 +74,19 @@ public class UserController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequestDTO.getUsername());
 
-            // Log the authorities
-            System.out.println("User Details Authorities: " + userDetails.getAuthorities());
-
-            // Get the User entity from UserDetails
             User user = userRepository.findByUsername(userDetails.getUsername());
 
             String jwtToken = jwtService.generateToken(userDetails);
-            return ResponseEntity.ok(jwtToken);
+
+            AuthResponse authResponse = new AuthResponse(jwtToken, user.getUserId(), user.getRole().getRoleId());
+
+            return ResponseEntity.ok(authResponse);
+
         } catch (Exception e) {
-            return new ResponseEntity<>("Login failed", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 
-
-
- 
     @GetMapping("/getUserById/{userId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
@@ -98,7 +98,6 @@ public class UserController {
         }
     }
 
-    
     @PutMapping("/updateUser/{userId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @Valid @RequestBody UserUpdateRequestDTO updateRequestDTO) {
@@ -110,7 +109,6 @@ public class UserController {
         }
     }
 
-   
     @DeleteMapping("/deleteUser/{userId}")
     @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {

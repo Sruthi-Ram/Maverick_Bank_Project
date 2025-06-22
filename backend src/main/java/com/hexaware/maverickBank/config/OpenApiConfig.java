@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.config;
+package com.hexaware.maverickbank.config;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
         }
 )
 @SecurityScheme(
-        name = "bearerAuth",
+        name = "Maverick_Bank",
         type = SecuritySchemeType.HTTP,
         bearerFormat = "JWT",
         scheme = "bearer",

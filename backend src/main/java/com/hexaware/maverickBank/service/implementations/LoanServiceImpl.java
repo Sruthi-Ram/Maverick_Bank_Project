@@ -1,4 +1,22 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 23, 2025
+ * Description : This class implements the LoanService interface and handles 
+ *               business logic related to loan management, such as:
+ * 
+ *               - Creating new loan records
+ *               - Retrieving loans by ID
+ *               - Listing all loans
+ *               - Updating loan details (partial updates allowed)
+ *               - Deleting loans by ID
+ * 
+ *               It includes validation logic to ensure loan data integrity
+ *               and converts between DTOs and entity models.
+ * -----------------------------------------------------------------------------
+ */
+
+package com.hexaware.maverickbank.service.implementations;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,12 +26,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hexaware.maverickBank.dto.LoanCreateRequestDTO;
-import com.hexaware.maverickBank.dto.LoanDTO;
-import com.hexaware.maverickBank.dto.LoanUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Loan;
-import com.hexaware.maverickBank.repository.ILoanRepository;
-import com.hexaware.maverickBank.service.interfaces.LoanService;
+import com.hexaware.maverickbank.dto.LoanCreateRequestDTO;
+import com.hexaware.maverickbank.dto.LoanDTO;
+import com.hexaware.maverickbank.dto.LoanUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Loan;
+import com.hexaware.maverickbank.repository.ILoanRepository;
+import com.hexaware.maverickbank.service.interfaces.LoanService;
 
 import jakarta.validation.ValidationException;
 
@@ -73,12 +91,9 @@ public class LoanServiceImpl implements LoanService {
         if (loanUpdateRequestDTO.getTenureMonths() != null) {
             existingLoan.setTenureMonths(loanUpdateRequestDTO.getTenureMonths());
         }
-        if (loanUpdateRequestDTO.getAmountPaid() != null) {
-            existingLoan.setAmountPaid(loanUpdateRequestDTO.getAmountPaid());
-        }
-        if (loanUpdateRequestDTO.getStatus() != null) {
-            existingLoan.setStatus(loanUpdateRequestDTO.getStatus());
-        }
+       
+       
+        
         validateLoan(existingLoan);
         Loan updatedLoan = loanRepository.save(existingLoan);
         return convertEntityToDTO(updatedLoan);
@@ -100,8 +115,8 @@ public class LoanServiceImpl implements LoanService {
         dto.setPrincipalAmount(loan.getPrincipalAmount());
         dto.setInterestRate(loan.getInterestRate());
         dto.setTenureMonths(loan.getTenureMonths());
-        dto.setAmountPaid(loan.getAmountPaid());
-        dto.setStatus(loan.getStatus());
+        //dto.setAmountPaid(loan.getAmountPaid());
+        //dto.setStatus(loan.getStatus());
         return dto;
     }
 

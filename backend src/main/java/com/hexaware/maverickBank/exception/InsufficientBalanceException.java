@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.exception;
+package com.hexaware.maverickbank.exception;
 
 public class InsufficientBalanceException extends RuntimeException { 
 

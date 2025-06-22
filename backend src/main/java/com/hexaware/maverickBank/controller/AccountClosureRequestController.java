@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.AccountClosureRequestCreateRequestDTO;
-import com.hexaware.maverickBank.dto.AccountClosureRequestDTO;
-import com.hexaware.maverickBank.service.interfaces.AccountClosureRequestService;
+import com.hexaware.maverickbank.dto.AccountClosureRequestCreateRequestDTO;
+import com.hexaware.maverickbank.dto.AccountClosureRequestDTO;
+import com.hexaware.maverickbank.service.interfaces.AccountClosureRequestService;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

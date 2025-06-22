@@ -1,8 +1,13 @@
-package com.hexaware.maverickBank.service.implementations;
+package com.hexaware.maverickbank.service.implementations;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -18,13 +23,13 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
-import com.hexaware.maverickBank.dto.CustomerDTO;
-import com.hexaware.maverickBank.dto.CustomerUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.entity.User;
-import com.hexaware.maverickBank.repository.ICustomerRepository;
-import com.hexaware.maverickBank.repository.IUserRepository;
+import com.hexaware.maverickbank.dto.CustomerCreateRequestDTO;
+import com.hexaware.maverickbank.dto.CustomerDTO;
+import com.hexaware.maverickbank.dto.CustomerUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Customer;
+import com.hexaware.maverickbank.dto.entity.User;
+import com.hexaware.maverickbank.repository.ICustomerRepository;
+import com.hexaware.maverickbank.repository.IUserRepository;
 
 import jakarta.validation.ValidationException;
 

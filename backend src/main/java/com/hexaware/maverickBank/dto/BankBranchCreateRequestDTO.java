@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.dto;
+package com.hexaware.maverickbank.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,10 +1,11 @@
-package com.hexaware.maverickBank.dto;
+package com.hexaware.maverickbank.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
 public class UserUpdateRequestDTO {
-
+	
+	private String username;
     @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
 
@@ -47,4 +48,12 @@ public class UserUpdateRequestDTO {
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
 }

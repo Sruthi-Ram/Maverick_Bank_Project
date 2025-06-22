@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.AccountCreateRequestDTO;
-import com.hexaware.maverickBank.dto.AccountDTO;
-import com.hexaware.maverickBank.dto.AccountUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Account;
-import com.hexaware.maverickBank.entity.BankBranch;
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.entity.Transaction;
-import com.hexaware.maverickBank.service.interfaces.AccountService;
+import com.hexaware.maverickbank.dto.AccountCreateRequestDTO;
+import com.hexaware.maverickbank.dto.AccountDTO;
+import com.hexaware.maverickbank.dto.AccountUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Account;
+import com.hexaware.maverickbank.dto.entity.BankBranch;
+import com.hexaware.maverickbank.dto.entity.Customer;
+import com.hexaware.maverickbank.dto.entity.Transaction;
+import com.hexaware.maverickbank.service.interfaces.AccountService;
 
 import jakarta.validation.Valid;
 
@@ -40,7 +40,7 @@ public class AccountController {
 
     @PostMapping("/createaccount")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('BANK_EMPLOYEE')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<AccountDTO> createAccount(@Valid @RequestBody AccountCreateRequestDTO accountCreateRequestDTO) {
         AccountDTO createdAccount = accountService.createAccount(accountCreateRequestDTO);
         return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
@@ -114,11 +114,14 @@ public class AccountController {
     public ResponseEntity<List<Transaction>> getTransactionsForAccount(@PathVariable Long accountId) {
         try {
             List<Transaction> transactions = accountService.getTransactionsForAccount(accountId);
-            return new ResponseEntity<>(transactions, HttpStatus.OK);
+            return ResponseEntity.ok(transactions);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @GetMapping("/gettransactionsforaccountbydaterange/{accountId}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'BANK_EMPLOYEE')")

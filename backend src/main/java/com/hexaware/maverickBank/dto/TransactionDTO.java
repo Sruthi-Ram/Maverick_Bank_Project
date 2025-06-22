@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.dto;
+package com.hexaware.maverickbank.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,8 +10,8 @@ public class TransactionDTO {
     private String transactionType;
     private BigDecimal amount;
     private LocalDateTime transactionDate;
-    private String description;
-    private Long beneficiaryId;
+    //private String description;
+    //private Long beneficiaryId;
 
     // Constructors
     public TransactionDTO() {
@@ -23,8 +23,8 @@ public class TransactionDTO {
         this.transactionType = transactionType;
         this.amount = amount;
         this.transactionDate = transactionDate;
-        this.description = description;
-        this.beneficiaryId = beneficiaryId;
+        //this.description = description;
+        //this.beneficiaryId = beneficiaryId;
     }
 
     // Getters and setters
@@ -68,19 +68,7 @@ public class TransactionDTO {
         this.transactionDate = transactionDate;
     }
 
-    public String getDescription() {
-        return description;
-    }
+    
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Long getBeneficiaryId() {
-        return beneficiaryId;
-    }
-
-    public void setBeneficiaryId(Long beneficiaryId) {
-        this.beneficiaryId = beneficiaryId;
-    }
+    
 }

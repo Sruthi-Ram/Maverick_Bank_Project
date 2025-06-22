@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.service.implementations;
+package com.hexaware.maverickbank.service.implementations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -20,17 +20,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.hexaware.maverickBank.dto.AccountCreateRequestDTO;
-import com.hexaware.maverickBank.dto.AccountDTO;
-import com.hexaware.maverickBank.dto.AccountUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Account;
-import com.hexaware.maverickBank.entity.BankBranch;
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.entity.Transaction;
-import com.hexaware.maverickBank.repository.IAccountRepository;
-import com.hexaware.maverickBank.repository.IBankBranchRepository;
-import com.hexaware.maverickBank.repository.ICustomerRepository;
-import com.hexaware.maverickBank.repository.ITransactionRepository;
+import com.hexaware.maverickbank.dto.AccountCreateRequestDTO;
+import com.hexaware.maverickbank.dto.AccountDTO;
+import com.hexaware.maverickbank.dto.AccountUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Account;
+import com.hexaware.maverickbank.dto.entity.BankBranch;
+import com.hexaware.maverickbank.dto.entity.Customer;
+import com.hexaware.maverickbank.dto.entity.Transaction;
+import com.hexaware.maverickbank.repository.IAccountRepository;
+import com.hexaware.maverickbank.repository.IBankBranchRepository;
+import com.hexaware.maverickbank.repository.ICustomerRepository;
+import com.hexaware.maverickbank.repository.ITransactionRepository;
 
 import jakarta.validation.ValidationException;
 

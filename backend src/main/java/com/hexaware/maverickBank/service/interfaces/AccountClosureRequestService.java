@@ -1,9 +1,9 @@
-package com.hexaware.maverickBank.service.interfaces;
+package com.hexaware.maverickbank.service.interfaces;
 
 import java.util.List;
 
-import com.hexaware.maverickBank.dto.AccountClosureRequestCreateRequestDTO;
-import com.hexaware.maverickBank.dto.AccountClosureRequestDTO;
+import com.hexaware.maverickbank.dto.AccountClosureRequestCreateRequestDTO;
+import com.hexaware.maverickbank.dto.AccountClosureRequestDTO;
 
 public interface AccountClosureRequestService {
     AccountClosureRequestDTO createAccountClosureRequest(AccountClosureRequestCreateRequestDTO requestDTO);

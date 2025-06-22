@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.exception;
+package com.hexaware.maverickbank.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

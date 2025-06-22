@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.entity;
+package com.hexaware.maverickbank.dto.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.service.implementations;
+package com.hexaware.maverickbank.service.implementations;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,14 +19,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.hexaware.maverickBank.dto.CustomerDTO;
-import com.hexaware.maverickBank.dto.LoanApplicationCreateRequestDTO;
-import com.hexaware.maverickBank.dto.LoanApplicationDTO;
-import com.hexaware.maverickBank.dto.LoanApplicationUpdateRequestDTO;
-import com.hexaware.maverickBank.entity.Customer;
-import com.hexaware.maverickBank.entity.Loan;
-import com.hexaware.maverickBank.entity.LoanApplication;
-import com.hexaware.maverickBank.repository.ILoanApplicationRepository;
+import com.hexaware.maverickbank.dto.CustomerDTO;
+import com.hexaware.maverickbank.dto.LoanApplicationCreateRequestDTO;
+import com.hexaware.maverickbank.dto.LoanApplicationDTO;
+import com.hexaware.maverickbank.dto.LoanApplicationUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.entity.Customer;
+import com.hexaware.maverickbank.dto.entity.Loan;
+import com.hexaware.maverickbank.dto.entity.LoanApplication;
+import com.hexaware.maverickbank.repository.ILoanApplicationRepository;
 
 @ExtendWith(MockitoExtension.class)
 class LoanApplicationServiceImplTest {

@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.controller;
+package com.hexaware.maverickbank.controller;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hexaware.maverickBank.dto.LoanApplicationCreateRequestDTO;
-import com.hexaware.maverickBank.dto.LoanApplicationDTO;
-import com.hexaware.maverickBank.dto.LoanApplicationUpdateRequestDTO;
-import com.hexaware.maverickBank.service.interfaces.LoanApplicationService;
+import com.hexaware.maverickbank.dto.LoanApplicationCreateRequestDTO;
+import com.hexaware.maverickbank.dto.LoanApplicationDTO;
+import com.hexaware.maverickbank.dto.LoanApplicationUpdateRequestDTO;
+import com.hexaware.maverickbank.service.interfaces.LoanApplicationService;
 
 import jakarta.validation.Valid;
 

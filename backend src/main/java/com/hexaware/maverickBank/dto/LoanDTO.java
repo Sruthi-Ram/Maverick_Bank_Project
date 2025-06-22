@@ -1,4 +1,4 @@
-package com.hexaware.maverickBank.dto;
+package com.hexaware.maverickbank.dto;
 
 import java.math.BigDecimal;
 
@@ -9,8 +9,8 @@ public class LoanDTO {
     private BigDecimal principalAmount;
     private BigDecimal interestRate;
     private Integer tenureMonths;
-    private BigDecimal amountPaid;
-    private String status;
+    //private BigDecimal amountPaid;
+    //private String status;
 
     public LoanDTO() {
     }
@@ -21,8 +21,8 @@ public class LoanDTO {
         this.principalAmount = principalAmount;
         this.interestRate = interestRate;
         this.tenureMonths = tenureMonths;
-        this.amountPaid = amountPaid;
-        this.status = status;
+        //this.amountPaid = amountPaid;
+        //this.status = status;
     }
 
     public Long getLoanId() {
@@ -65,7 +65,7 @@ public class LoanDTO {
         this.tenureMonths = tenureMonths;
     }
 
-    public BigDecimal getAmountPaid() {
+    /* public BigDecimal getAmountPaid() {
         return amountPaid;
     }
 
@@ -79,5 +79,5 @@ public class LoanDTO {
 
     public void setStatus(String status) {
         this.status = status;
-    }
+    }*/
 }

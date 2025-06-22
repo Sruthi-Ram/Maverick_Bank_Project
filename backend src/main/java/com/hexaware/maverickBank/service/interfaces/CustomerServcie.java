@@ -1,12 +1,12 @@
-package com.hexaware.maverickBank.service.interfaces;
+package com.hexaware.maverickbank.service.interfaces;
 
 import java.util.List;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.hexaware.maverickBank.dto.CustomerCreateRequestDTO;
-import com.hexaware.maverickBank.dto.CustomerDTO;
-import com.hexaware.maverickBank.dto.CustomerUpdateRequestDTO;
+import com.hexaware.maverickbank.dto.CustomerCreateRequestDTO;
+import com.hexaware.maverickbank.dto.CustomerDTO;
+import com.hexaware.maverickbank.dto.CustomerUpdateRequestDTO;
 
 public interface CustomerServcie {
     CustomerDTO createCustomer(CustomerCreateRequestDTO customerCreateRequestDTO);

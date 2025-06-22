@@ -1,4 +1,22 @@
-package com.hexaware.maverickBank.service.implementations;
+/**
+ * -----------------------------------------------------------------------------
+ * Author      : Sruthi Ramesh
+ * Date        : May 22, 2025
+ * Description : This class implements the RoleService interface and handles 
+ *               business logic related to role management, such as:
+ *               
+ *               - Creating a new role
+ *               - Retrieving roles by ID or name
+ *               - Updating existing roles
+ *               - Deleting roles
+ *               - Listing all available roles
+ * 
+ *               It ensures validation for duplicate role names and uses DTO
+ *               conversion methods to isolate the service layer from the entity.
+ * -----------------------------------------------------------------------------
+ */
+
+package com.hexaware.maverickbank.service.implementations;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -7,10 +25,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hexaware.maverickBank.dto.RoleDTO;
-import com.hexaware.maverickBank.entity.Role;
-import com.hexaware.maverickBank.repository.IRoleRepository;
-import com.hexaware.maverickBank.service.interfaces.RoleService;
+import com.hexaware.maverickbank.dto.RoleDTO;
+import com.hexaware.maverickbank.dto.entity.Role;
+import com.hexaware.maverickbank.repository.IRoleRepository;
+import com.hexaware.maverickbank.service.interfaces.RoleService;
 
 import jakarta.validation.ValidationException;
 
